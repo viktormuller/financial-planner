@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import Hello from './Hello';
 import './style.css';
+import Example from './BarChart'
 
 interface AppProps { }
 interface AppState {
@@ -23,6 +24,9 @@ class App extends Component<AppProps, AppState> {
         <p>
           Start editing to see some magic happen :)
         </p>
+        <div>
+          <Example/>
+        </div>
       </div>
     );
   }

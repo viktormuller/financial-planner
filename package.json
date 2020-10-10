@@ -5,8 +5,10 @@
   "dependencies": {
     "@types/react": "^16.8.2",
     "@types/react-dom": "^16.8.0",
+    "@types/react-vis": "^1.11.3",
     "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react-dom": "^16.8.0",
+    "react-vis": "^1.11.7"
   },
   "scripts": {
     "start": "react-scripts-ts start",
