@@ -7,12 +7,13 @@ import {XYPlot,
 import findDomain from './utils';
 import './style.css';
 import { MonetaryValue } from './MonetaryValue';
-import Household from './Household';
+import {Household} from './Household';
 import Job from './Job';
+import { FullHouseholdExpense } from './FullHouseholdExpense';
 
 
 interface AppProps {
-  netWorthSeries: Array<MonetaryValue>
+  netWorthSeries: Map<number, MonetaryValue>
  }
 interface AppState {
   name: string
@@ -31,10 +32,10 @@ class App extends Component<AppProps, AppState> {
     //TODO: Fix findDomain to return lower end of range and then override here with 0
     //const yDmn = findDomain(this.state.myData);
     const myData: any[] = new Array<any>(); 
-    for (let netWorthPoint of this.props.netWorthSeries){
+    for (let netWorthPoint of this.props.netWorthSeries.entries()){
       myData.push({
-        x: netWorthPoint.year,
-        y: netWorthPoint.value
+        x: netWorthPoint[0],
+        y: netWorthPoint[1].value
       })
     }
     return (
@@ -54,7 +55,9 @@ class App extends Component<AppProps, AppState> {
 }
 
 const household = new Household();
-const job = new Job();
+const job = new Job(2020, 2055);
+const hhExpense = new FullHouseholdExpense();
 job.register(household);
+hhExpense.register(household);
 
 render(<App netWorthSeries = {household.netWorthSeries()} />, document.getElementById('root'));

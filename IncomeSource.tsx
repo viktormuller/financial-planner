@@ -1,5 +1,5 @@
 import { MonetaryValue } from "./MonetaryValue";
 
-export default interface IncomeSource {
+export interface IncomeSource {
   income(year: number): MonetaryValue;
 }
