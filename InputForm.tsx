@@ -13,7 +13,7 @@ export class InputForm extends Component<InputFormProps> {
   constructor(props) {
     super(props);
   }
-
+  /*
   handleChange(event) {
     var name: string = event.target.name;
     var state = {};
@@ -30,8 +30,9 @@ export class InputForm extends Component<InputFormProps> {
         console.log("Unknown change event target: " + event.target.name);
       }
     }
+    this.setState(state);
   }
-
+*/
   render() {
     return (
       <form>

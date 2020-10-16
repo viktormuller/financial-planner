@@ -9,7 +9,7 @@ import { MonetaryValue } from "./MonetaryValue";
 export default class Job extends HouseholdComponent implements IncomeSource {
   private startYear: number = new Date().getFullYear();
   private endYear: number;
-  startingIncome: number = 30000;
+  startingIncome: number = 50000;
 
   constructor(pStartYear?: number, pEndYear?: number) {
     super();
@@ -18,15 +18,9 @@ export default class Job extends HouseholdComponent implements IncomeSource {
   }
 
   income(year: number): MonetaryValue {
-    return {
-      currency: CurrencyCode.GBP,
-      value:
-        year <= this.endYear && year >= this.startYear ? this.startingIncome : 0
-    };
-  }
-  register(household: Household) {
-    household.addIncomeSource(this);
-    return household;
+    return new MonetaryValue(
+      year <= this.endYear && year >= this.startYear ? this.startingIncome : 0
+    );
   }
 }
 

@@ -1,3 +1,4 @@
+import { Asset } from "./Asset";
 import { CurrencyCode } from "./CurrencyCode";
 import { Expense } from "./Expense";
 import { HouseholdComponent } from "./HouseholdComponent";
@@ -6,69 +7,81 @@ import { MonetaryValue } from "./MonetaryValue";
 import { SavingsAccount } from "./SavingsAccount";
 
 export class Household {
-  incomeSources: IncomeSource[] = new Array<IncomeSource>();
-  expenses: Expense[] = new Array<Expense>();
   hhComponents: Map<string, HouseholdComponent> = new Map<
     string,
     HouseholdComponent
   >();
+  pensionAccounts: Asset[] = new Array<Asset>();
+  taxfreeAccounts: Asset[] = new Array<Asset>();
+  afterTaxAccounts: Asset[] = new Array<Asset>();
+
+  netWorthByYear: Map<number, MonetaryValue> = new Map<number, MonetaryValue>();
 
   private startYear = 2021;
-  private endYear = 2100;
-  private savingsAcc: SavingsAccount = new SavingsAccount(
-    { currency: CurrencyCode.GBP, value: 1000000 },
-    0.02,
-    2020
-  );
+  private endYear = 2033;
 
   constructor(pStartYear?: number, pEndYear?: number) {
     if (pStartYear) this.startYear = pStartYear;
     if (pEndYear) this.endYear = pEndYear;
-    this.savingsAcc.register(this);
+    const sAcc: SavingsAccount = new SavingsAccount();
+    this.hhComponents.set(sAcc.id, sAcc);
+    this.afterTaxAccounts.push(sAcc);
   }
 
-  addIncomeSource(incomeSource: IncomeSource) {
-    this.incomeSources.push(incomeSource);
+  addComponent(component: HouseholdComponent) {
+    this.hhComponents.set(component.id, component);
   }
 
-  addExpense(expense: Expense) {
-    this.expenses.push(expense);
+  addAfterTaxAccount(account: Asset) {
+    this.addComponent(account);
+    this.afterTaxAccounts.push(account);
   }
 
-  netWorthSeries(): Map<number, MonetaryValue> {
+  update() {
     //Iterate over each year
     for (var year = this.startYear; year < this.endYear + 1; year++) {
       //TODO: use Household default currency instead of hardcoded GBP
-      var incomeForYear = { year: year, currency: CurrencyCode.GBP, value: 0 };
+      var incomeForYear = new MonetaryValue(0);
 
-      var expenseForYear = { year: year, currency: CurrencyCode.GBP, value: 0 };
+      var expenseForYear = new MonetaryValue(0);
 
       //Iterate over each incomeSource
-      for (let incomeSource of this.incomeSources) {
+      for (let [id, component] of this.hhComponents) {
         //TODO: convert currency if needed
-        incomeForYear.value += incomeSource.income(year).value;
+        incomeForYear = incomeForYear.add(component.income(year));
+        expenseForYear = expenseForYear.add(component.expense(year));
       }
 
-      //Iterate over each expense
-      for (let expense of this.expenses) {
-        //TODO: convert currency if needed
-        expenseForYear.value += expense.expense(year).value;
-      }
-
-      var netWorthForLastYear = this.savingsAcc.getClosingBalance(year - 1);
-      if (!netWorthForLastYear) {
-        netWorthForLastYear = { currency: CurrencyCode.GBP, value: 0 };
-        this.savingsAcc.setClosingBalance(year - 1, netWorthForLastYear);
-      }
-
-      var netWorthForYear = {
-        currency: CurrencyCode.GBP,
-        value:
-          netWorthForLastYear.value + incomeForYear.value - expenseForYear.value
-      };
-
-      this.savingsAcc.setClosingBalance(year, netWorthForYear);
+      this.allocateEarnings(
+        year,
+        incomeForYear.add(
+          new MonetaryValue(expenseForYear.value * -1, expenseForYear.currency)
+        )
+      );
     }
-    return this.savingsAcc.getAllClosingBalances();
+  }
+
+  allocateEarnings(year: number, afterTaxSaving: MonetaryValue) {
+    console.log(
+      "After tax saving in year: " + year + " is: " + afterTaxSaving.value
+    );
+    var account = this.afterTaxAccounts[0];
+    var prevYearBal = account.closingValue(year - 1);
+    prevYearBal = prevYearBal ? prevYearBal : new MonetaryValue(0);
+    console.log("prevYearBal in year: " + year + " is :" + prevYearBal.value);
+    account.setValue(year, prevYearBal.add(afterTaxSaving));
+    console.log(
+      "Closing value in year: " +
+        year +
+        " is: " +
+        account.closingValue(year).value
+    );
+    for (let [year, monValue] of this.afterTaxAccounts[0].allClosingValues()) {
+      console.log("allocateEarnings: " + year + ", " + monValue.value);
+    }
+  }
+
+  netWorthSeries(): Map<number, MonetaryValue> {
+    return this.afterTaxAccounts[0].allClosingValues();
   }
 }

@@ -1,14 +1,11 @@
+import { Asset } from "./Asset";
 import { CurrencyCode } from "./CurrencyCode";
 import { Household } from "./Household";
 import { HouseholdComponent } from "./HouseholdComponent";
 import { IncomeSource } from "./IncomeSource";
 import { MonetaryValue } from "./MonetaryValue";
 
-export class SavingsAccount extends HouseholdComponent implements IncomeSource {
-  private closingBalances: Map<number, MonetaryValue> = new Map<
-    number,
-    MonetaryValue
-  >();
+export class SavingsAccount extends Asset {
   private interest: number = 0.02;
 
   constructor(
@@ -17,34 +14,32 @@ export class SavingsAccount extends HouseholdComponent implements IncomeSource {
     year = new Date().getFullYear() - 1
   ) {
     super();
-    this.closingBalances.set(
+    this.closingValues.set(
       year,
-      openingBalance ? openingBalance : { value: 0, currency: CurrencyCode.GBP }
+      openingBalance ? openingBalance : new MonetaryValue(0)
     );
     if (pInterest) this.interest = pInterest;
   }
 
-  register(household: Household): Household {
-    household.addIncomeSource(this);
-    return household;
-  }
   income(year: number): MonetaryValue {
-    var prevYearClosingBal: MonetaryValue = this.closingBalances.get(year - 1);
-    return {
-      currency: prevYearClosingBal.currency,
-      value: prevYearClosingBal.value * this.interest
-    };
+    var prevYearClosingBal: MonetaryValue = this.closingValues.get(year - 1);
+    if (prevYearClosingBal) {
+      return new MonetaryValue(
+        prevYearClosingBal.value * this.interest,
+        prevYearClosingBal.currency
+      );
+    } else {
+      return new MonetaryValue(0);
+    }
   }
 
-  setClosingBalance(year: number, balance: MonetaryValue) {
-    this.closingBalances.set(year, balance);
-  }
-
-  getClosingBalance(year: number): MonetaryValue {
-    return this.closingBalances.get(year);
-  }
-
-  getAllClosingBalances(): Map<number, MonetaryValue> {
-    return this.closingBalances;
+  closingValue(year: number): MonetaryValue {
+    var ret = this.closingValues.get(year);
+    if (ret) return ret;
+    else {
+      ret = new MonetaryValue(0);
+    }
+    this.closingValues.set(year, ret);
+    return ret;
   }
 }

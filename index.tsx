@@ -13,7 +13,6 @@ interface AppProps {
   household: Household;
 }
 interface AppState {
-  name: string;
   household: Household;
 }
 
@@ -23,22 +22,26 @@ class App extends Component<AppProps, AppState> {
   constructor(props) {
     super(props);
     var household = props.household;
+
     var job = new Job(2020, 2055);
+    household.addComponent(job);
+
     var hhExpense = new FullHouseholdExpense();
-    job.register(household);
-    hhExpense.register(household);
+    household.addComponent(hhExpense);
+
     this.job = job;
 
     this.state = {
-      name: "React",
       household: household
     };
-    this.onIncomeChange.bind(this);
+    this.onIncomeChange = this.onIncomeChange.bind(this);
+    this.state.household.update();
   }
 
   onIncomeChange(event: React.ChangeEvent<HTMLInputElement>, job: Job) {
     job.startingIncome = Number(event.target.value);
     var newHH: Household = this.state.household;
+    newHH.update();
     this.setState({ household: newHH });
   }
 
@@ -47,12 +50,13 @@ class App extends Component<AppProps, AppState> {
     const netWorthSeriesEntries = this.state.household
       .netWorthSeries()
       .entries();
-    for (let netWorthPoint of netWorthSeriesEntries) {
+    for (let [year, amount] of netWorthSeriesEntries) {
       myData.push({
-        x: netWorthPoint[0],
-        y: netWorthPoint[1].value
+        x: year,
+        y: amount.value
       });
     }
+    console.log(myData);
     return (
       <div>
         <div>
