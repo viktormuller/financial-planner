@@ -6,19 +6,21 @@ import "./style.css";
 import { MonetaryValue } from "./MonetaryValue";
 import { Household } from "./Household";
 import Job, { JobInputs } from "./Job";
-import { FullHouseholdExpense } from "./FullHouseholdExpense";
-import { InputForm } from "./InputForm";
+import {
+  FullHHExpenseInput,
+  FullHouseholdExpense
+} from "./FullHouseholdExpense";
+import { HouseholdComponent } from "./HouseholdComponent";
 
 interface AppProps {
   household: Household;
 }
 interface AppState {
   household: Household;
+  recalcTimeout: number;
 }
 
 class App extends Component<AppProps, AppState> {
-  //TODO: refactor this to be dynamically loaded from household
-  private job: Job;
   constructor(props) {
     super(props);
     var household = props.household;
@@ -29,20 +31,65 @@ class App extends Component<AppProps, AppState> {
     var hhExpense = new FullHouseholdExpense();
     household.addComponent(hhExpense);
 
-    this.job = job;
-
-    this.state = {
-      household: household
-    };
     this.onIncomeChange = this.onIncomeChange.bind(this);
-    this.state.household.update();
+    household.update();
+    this.state = {
+      household: household,
+      recalcTimeout: 0
+    };
   }
 
-  onIncomeChange(event: React.ChangeEvent<HTMLInputElement>, job: Job) {
-    job.startingIncome = Number(event.target.value);
-    var newHH: Household = this.state.household;
-    newHH.update();
-    this.setState({ household: newHH });
+  onIncomeChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+    comp: HouseholdComponent
+  ) {
+    if (this.state.recalcTimeout) clearTimeout(this.state.recalcTimeout);
+    switch (comp.constructor) {
+      case Job: {
+        (comp as Job).startingIncome = Number(event.target.value);
+        break;
+      }
+      case FullHouseholdExpense: {
+        (comp as FullHouseholdExpense).startingExpense = Number(
+          event.target.value
+        );
+        break;
+      }
+    }
+    this.setState({
+      household: this.state.household,
+      recalcTimeout: setTimeout(() => {
+        this.state.household.update();
+        this.setState({ household: this.state.household });
+      }, 300)
+    });
+  }
+
+  renderHouseholdComponent(comp: HouseholdComponent): JSX.Element {
+    var ret = <div />;
+
+    switch (comp.constructor) {
+      case Job: {
+        ret = (
+          <JobInputs job={comp as Job} onIncomeChange={this.onIncomeChange} />
+        );
+        break;
+      }
+      case FullHouseholdExpense: {
+        ret = (
+          <FullHHExpenseInput
+            expense={comp as FullHouseholdExpense}
+            onIncomeChange={this.onIncomeChange}
+          />
+        );
+        break;
+      }
+      default: {
+        ret = <div />;
+      }
+    }
+
+    return ret;
   }
 
   render() {
@@ -56,12 +103,13 @@ class App extends Component<AppProps, AppState> {
         y: amount.value
       });
     }
-    console.log(myData);
+
     return (
       <div>
-        <div>
-          <JobInputs job={this.job} onIncomeChange={this.onIncomeChange} />
-        </div>
+        {Array.from(this.state.household.hhComponents.values()).map(
+          this.renderHouseholdComponent,
+          this
+        )}
         <div>
           <XYPlot margin={{ left: 75 }} width={800} height={600}>
             <VerticalBarSeries

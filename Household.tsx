@@ -18,7 +18,7 @@ export class Household {
   netWorthByYear: Map<number, MonetaryValue> = new Map<number, MonetaryValue>();
 
   private startYear = 2021;
-  private endYear = 2033;
+  private endYear = 2100;
 
   constructor(pStartYear?: number, pEndYear?: number) {
     if (pStartYear) this.startYear = pStartYear;
@@ -39,7 +39,10 @@ export class Household {
 
   update() {
     //Iterate over each year
+    console.debug("Updating household");
     for (var year = this.startYear; year < this.endYear + 1; year++) {
+      console.debug("Year: " + year);
+
       //TODO: use Household default currency instead of hardcoded GBP
       var incomeForYear = new MonetaryValue(0);
 
@@ -52,6 +55,9 @@ export class Household {
         expenseForYear = expenseForYear.add(component.expense(year));
       }
 
+      console.debug("Income for year:  " + incomeForYear.value);
+      console.debug("Expense for year: " + expenseForYear.value);
+
       this.allocateEarnings(
         year,
         incomeForYear.add(
@@ -62,23 +68,18 @@ export class Household {
   }
 
   allocateEarnings(year: number, afterTaxSaving: MonetaryValue) {
-    console.log(
-      "After tax saving in year: " + year + " is: " + afterTaxSaving.value
+    console.debug(
+      "Allocating earnings of " + afterTaxSaving.value + " for year: " + year
     );
     var account = this.afterTaxAccounts[0];
     var prevYearBal = account.closingValue(year - 1);
+
+    console.debug("Previous year balance: " + prevYearBal.value);
     prevYearBal = prevYearBal ? prevYearBal : new MonetaryValue(0);
-    console.log("prevYearBal in year: " + year + " is :" + prevYearBal.value);
     account.setValue(year, prevYearBal.add(afterTaxSaving));
-    console.log(
-      "Closing value in year: " +
-        year +
-        " is: " +
-        account.closingValue(year).value
+    console.debug(
+      "This year's balance: " + prevYearBal.add(afterTaxSaving).value
     );
-    for (let [year, monValue] of this.afterTaxAccounts[0].allClosingValues()) {
-      console.log("allocateEarnings: " + year + ", " + monValue.value);
-    }
   }
 
   netWorthSeries(): Map<number, MonetaryValue> {
