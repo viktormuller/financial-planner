@@ -26,7 +26,7 @@ export default class Job extends HouseholdComponent implements IncomeSource {
 
 class JobProps {
   job: Job;
-  onIncomeChange;
+  onChange;
 }
 
 export class JobInputs extends Component<JobProps> {
@@ -42,7 +42,7 @@ export class JobInputs extends Component<JobProps> {
           name="income"
           type="number"
           value={this.props.job.startingIncome}
-          onChange={() => this.props.onIncomeChange(event, this.props.job)}
+          onChange={() => this.props.onChange(event, this.props.job)}
         />
       </label>
     );

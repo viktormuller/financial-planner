@@ -5,6 +5,8 @@ import { Expense } from "./Expense";
 import { Household } from "./Household";
 import { HouseholdComponent } from "./HouseholdComponent";
 import { MonetaryValue } from "./MonetaryValue";
+import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
 
 export class FullHouseholdExpense extends HouseholdComponent
   implements Expense {
@@ -17,7 +19,7 @@ export class FullHouseholdExpense extends HouseholdComponent
 
 class FullHHExpenseProps {
   expense: FullHouseholdExpense;
-  onIncomeChange;
+  onChange;
 }
 
 export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
@@ -27,15 +29,36 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
 
   render() {
     return (
+      <Card>
+        <Card.Header>Expense</Card.Header>
+        <Card.Body>
+          <Form>
+            <Form.Group>
+              <Form.Label>Annual expense</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="30000"
+                value={this.props.expense.startingExpense}
+                onChange={() => this.props.onChange(event, this.props.expense)}
+              />
+            </Form.Group>
+          </Form>
+        </Card.Body>
+      </Card>
+    );
+  }
+  /*
+  render() {
+    return (
       <label>
         Expense:
         <input
           name="expense"
           type="number"
           value={this.props.expense.startingExpense}
-          onChange={() => this.props.onIncomeChange(event, this.props.expense)}
+          onChange={() => this.props.onChange(event, this.props.expense)}
         />
       </label>
     );
-  }
+  }*/
 }
