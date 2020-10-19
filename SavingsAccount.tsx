@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import { Asset } from "./Asset";
-import { CurrencyCode } from "./CurrencyCode";
-import { Household } from "./Household";
-import { HouseholdComponent } from "./HouseholdComponent";
-import { IncomeSource } from "./IncomeSource";
 import { MonetaryValue } from "./MonetaryValue";
+import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
+import Accordion from "react-bootstrap/Accordion";
 
 export class SavingsAccount extends Asset {
   interest: number = 0.02;
@@ -58,6 +57,7 @@ export class SavingsAccount extends Asset {
 class SavingsAccountProps {
   account: SavingsAccount;
   onChange;
+  eventKey: string;
 }
 
 export class SavingsAccountInput extends Component<SavingsAccountProps> {
@@ -65,17 +65,35 @@ export class SavingsAccountInput extends Component<SavingsAccountProps> {
     super(props);
   }
 
+  onChange(event) {
+    this.props.account.setOpeningBalance(new MonetaryValue(event.target.value));
+    this.props.onChange(event, this.props.account);
+  }
+
   render() {
     return (
-      <label>
-        Opening balance:
-        <input
-          name="opening_balance"
-          type="number"
-          value={this.props.account.getOpeningBalance().value}
-          onChange={() => this.props.onChange(event, this.props.account)}
-        />
-      </label>
+      <Card>
+        <Accordion.Toggle as={Card.Header} eventKey={this.props.eventKey}>
+          After tax savings
+        </Accordion.Toggle>
+        <Accordion.Collapse eventKey={this.props.eventKey}>
+          <Card.Body>
+            <Form>
+              <Form.Group>
+                <Form.Label>
+                  Balance at the end of {this.props.account.yearOfOpening}
+                </Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="50000"
+                  value={this.props.account.getOpeningBalance().value}
+                  onChange={this.onChange.bind(this)}
+                />
+              </Form.Group>
+            </Form>
+          </Card.Body>
+        </Accordion.Collapse>
+      </Card>
     );
   }
 }

@@ -1,15 +1,12 @@
 import React from "react";
 import { Component } from "react";
-import { CurrencyCode } from "./CurrencyCode";
-import { Expense } from "./Expense";
-import { Household } from "./Household";
 import { HouseholdComponent } from "./HouseholdComponent";
 import { MonetaryValue } from "./MonetaryValue";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
+import Accordion from "react-bootstrap/Accordion";
 
-export class FullHouseholdExpense extends HouseholdComponent
-  implements Expense {
+export class FullHouseholdExpense extends HouseholdComponent {
   startingExpense: number = 30000;
 
   expense(year: number): MonetaryValue {
@@ -20,6 +17,7 @@ export class FullHouseholdExpense extends HouseholdComponent
 class FullHHExpenseProps {
   expense: FullHouseholdExpense;
   onChange;
+  eventKey: string;
 }
 
 export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
@@ -27,38 +25,33 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
     super(props);
   }
 
+  onChange(event) {
+    this.props.expense.startingExpense = event.target.value;
+    this.props.onChange(event, this.props.expense);
+  }
+
   render() {
     return (
       <Card>
-        <Card.Header>Expense</Card.Header>
-        <Card.Body>
-          <Form>
-            <Form.Group>
-              <Form.Label>Annual expense</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="30000"
-                value={this.props.expense.startingExpense}
-                onChange={() => this.props.onChange(event, this.props.expense)}
-              />
-            </Form.Group>
-          </Form>
-        </Card.Body>
+        <Accordion.Toggle as={Card.Header} eventKey={this.props.eventKey}>
+          Expenses
+        </Accordion.Toggle>
+        <Accordion.Collapse eventKey={this.props.eventKey}>
+          <Card.Body>
+            <Form>
+              <Form.Group>
+                <Form.Label>Annual expense</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="30000"
+                  value={this.props.expense.startingExpense}
+                  onChange={this.onChange.bind(this)}
+                />
+              </Form.Group>
+            </Form>
+          </Card.Body>
+        </Accordion.Collapse>
       </Card>
     );
   }
-  /*
-  render() {
-    return (
-      <label>
-        Expense:
-        <input
-          name="expense"
-          type="number"
-          value={this.props.expense.startingExpense}
-          onChange={() => this.props.onChange(event, this.props.expense)}
-        />
-      </label>
-    );
-  }*/
 }

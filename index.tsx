@@ -13,16 +13,19 @@ import {
 import { HouseholdComponent } from "./HouseholdComponent";
 import { SavingsAccount, SavingsAccountInput } from "./SavingsAccount";
 import * as d3 from "d3-format";
+import Accordion from "react-bootstrap/Accordion";
+import { Children, ChildrenInput } from "./Children";
 
 interface AppProps {
   household: Household;
 }
 interface AppState {
   household: Household;
-  recalcTimeout: number;
 }
 
 class App extends Component<AppProps, AppState> {
+  recalcTimeout: number;
+
   constructor(props) {
     super(props);
     var household = props.household;
@@ -33,55 +36,53 @@ class App extends Component<AppProps, AppState> {
     var hhExpense = new FullHouseholdExpense();
     household.addComponent(hhExpense);
 
+    var children = new Children();
+    children.yearsOfBirth = [2022, 2024];
+    household.addComponent(children);
+
     this.onChange = this.onChange.bind(this);
     household.update();
     this.state = {
-      household: household,
-      recalcTimeout: 0
+      household: household
     };
+    this.recalcTimeout = 0;
   }
 
   onChange(
     event: React.ChangeEvent<HTMLInputElement>,
     comp: HouseholdComponent
   ) {
-    if (this.state.recalcTimeout) clearTimeout(this.state.recalcTimeout);
+    if (this.recalcTimeout) clearTimeout(this.recalcTimeout);
     switch (comp.constructor) {
-      case Job: {
-        (comp as Job).startingIncome = Number(event.target.value);
-        break;
-      }
-      case FullHouseholdExpense: {
-        (comp as FullHouseholdExpense).startingExpense = Number(
-          event.target.value
-        );
-        break;
-      }
       case SavingsAccount: {
-        console.debug("Change to SavingsAccount: " + event.target.value);
         (comp as SavingsAccount).setOpeningBalance(
           new MonetaryValue(Number(event.target.value))
         );
         break;
       }
     }
-    this.setState({
-      household: this.state.household,
-      recalcTimeout: setTimeout(() => {
-        this.state.household.update();
-        this.setState({ household: this.state.household });
-      }, 500)
-    });
+    this.setState({ household: this.state.household });
+    this.recalcTimeout = setTimeout(() => {
+      this.state.household.update();
+      this.setState({ household: this.state.household });
+    }, 500);
   }
 
-  renderHouseholdComponent(comp: HouseholdComponent): JSX.Element {
+  renderHouseholdComponent(
+    comp: HouseholdComponent,
+    index: number
+  ): JSX.Element {
     var ret = <div />;
 
     switch (comp.constructor) {
       case Job: {
         ret = (
           <div>
-            <JobInputs job={comp as Job} onChange={this.onChange} />
+            <JobInputs
+              job={comp as Job}
+              onChange={this.onChange}
+              eventKey={String(index)}
+            />
           </div>
         );
         break;
@@ -92,6 +93,7 @@ class App extends Component<AppProps, AppState> {
             <FullHHExpenseInput
               expense={comp as FullHouseholdExpense}
               onChange={this.onChange}
+              eventKey={String(index)}
             />
           </div>
         );
@@ -103,9 +105,18 @@ class App extends Component<AppProps, AppState> {
             <SavingsAccountInput
               account={comp as SavingsAccount}
               onChange={this.onChange}
+              eventKey={String(index)}
             />
           </div>
         );
+        break;
+      }
+      case Children: {
+        <ChildrenInput
+          children={comp as Children}
+          onChange={this.onChange}
+          eventKey={String(index)}
+        />;
         break;
       }
       default: {
@@ -131,10 +142,12 @@ class App extends Component<AppProps, AppState> {
     return (
       <div className="grid-container">
         <div className="item1">
-          {Array.from(this.state.household.hhComponents.values()).map(
-            this.renderHouseholdComponent,
-            this
-          )}
+          <Accordion defaultActiveKey="0">
+            {Array.from(this.state.household.hhComponents.values()).map(
+              this.renderHouseholdComponent,
+              this
+            )}
+          </Accordion>
         </div>
         <div className="item2">
           <XYPlot margin={{ left: 75, right: 75 }} width={800} height={600}>
