@@ -7,6 +7,7 @@ import { MonetaryValue } from "./MonetaryValue";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
+import * as d3 from "d3-format";
 
 export default class Job extends HouseholdComponent {
   private startYear: number = new Date().getFullYear();
@@ -40,7 +41,9 @@ export class JobInputs extends Component<JobProps> {
   onChange(event) {
     switch (event.target.name) {
       case "startingIncome": {
-        this.props.job.startingIncome = Number(event.target.value);
+        this.props.job.startingIncome = Number(
+          event.target.value.replace(/,/g, "")
+        );
         break;
       }
       case "endYear": {
@@ -61,21 +64,31 @@ export class JobInputs extends Component<JobProps> {
           <Card.Body>
             <Form>
               <Form.Group>
-                <Form.Label>Annual income (after tax)</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="startingIncome"
-                  placeholder="50000"
-                  value={this.props.job.startingIncome}
-                  onChange={this.onChange.bind(this)}
-                />
-                <Form.Label>Year of retirment</Form.Label>
-                <Form.Control
-                  name="endYear"
-                  type="number"
-                  value={this.props.job.endYear}
-                  onChange={this.onChange.bind(this)}
-                />
+                <div className="row">
+                  <Form.Label className="col-md-8">
+                    Annual income (after tax)
+                  </Form.Label>
+                  <Form.Control
+                    className="col-md-4 text-right"
+                    type="text"
+                    name="startingIncome"
+                    placeholder="50000"
+                    value={d3.format(",")(this.props.job.startingIncome)}
+                    onChange={this.onChange.bind(this)}
+                  />
+                </div>
+                <div className="row">
+                  <Form.Label className="col-md-8">
+                    Year of retirment
+                  </Form.Label>
+                  <Form.Control
+                    className="col-md-4 text-right"
+                    name="endYear"
+                    type="number"
+                    value={this.props.job.endYear}
+                    onChange={this.onChange.bind(this)}
+                  />
+                </div>
               </Form.Group>
             </Form>
           </Card.Body>

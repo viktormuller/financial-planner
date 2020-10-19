@@ -5,6 +5,7 @@ import { MonetaryValue } from "./MonetaryValue";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
+import * as d3 from "d3-format";
 
 export class FullHouseholdExpense extends HouseholdComponent {
   startingExpense: number = 30000;
@@ -26,7 +27,9 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
   }
 
   onChange(event) {
-    this.props.expense.startingExpense = event.target.value;
+    this.props.expense.startingExpense = Number(
+      event.target.value.replace(/,/g, "")
+    );
     this.props.onChange(event, this.props.expense);
   }
 
@@ -40,13 +43,16 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
           <Card.Body>
             <Form>
               <Form.Group>
-                <Form.Label>Annual expense</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="30000"
-                  value={this.props.expense.startingExpense}
-                  onChange={this.onChange.bind(this)}
-                />
+                <div className="row">
+                  <Form.Label className="col-md-8">Annual expense</Form.Label>
+                  <Form.Control
+                    className="col-md-4 text-right"
+                    type="text"
+                    placeholder="30000"
+                    value={d3.format(",")(this.props.expense.startingExpense)}
+                    onChange={this.onChange.bind(this)}
+                  />
+                </div>
               </Form.Group>
             </Form>
           </Card.Body>

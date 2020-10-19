@@ -1,6 +1,12 @@
 import React, { ChangeEvent, Component } from "react";
 import { render } from "react-dom";
-import { XYPlot, XAxis, YAxis, VerticalBarSeries } from "react-vis";
+import {
+  XYPlot,
+  XAxis,
+  YAxis,
+  VerticalBarSeries,
+  FlexibleWidthXYPlot
+} from "react-vis";
 import "./style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { MonetaryValue } from "./MonetaryValue";
@@ -53,14 +59,7 @@ class App extends Component<AppProps, AppState> {
     comp: HouseholdComponent
   ) {
     if (this.recalcTimeout) clearTimeout(this.recalcTimeout);
-    switch (comp.constructor) {
-      case SavingsAccount: {
-        (comp as SavingsAccount).setOpeningBalance(
-          new MonetaryValue(Number(event.target.value))
-        );
-        break;
-      }
-    }
+
     this.setState({ household: this.state.household });
     this.recalcTimeout = setTimeout(() => {
       this.state.household.update();
@@ -112,11 +111,13 @@ class App extends Component<AppProps, AppState> {
         break;
       }
       case Children: {
-        <ChildrenInput
-          children={comp as Children}
-          onChange={this.onChange}
-          eventKey={String(index)}
-        />;
+        ret = (
+          <ChildrenInput
+            children={comp as Children}
+            onChange={this.onChange}
+            eventKey={String(index)}
+          />
+        );
         break;
       }
       default: {
@@ -140,25 +141,27 @@ class App extends Component<AppProps, AppState> {
     }
 
     return (
-      <div className="grid-container">
-        <div className="item1">
-          <Accordion defaultActiveKey="0">
-            {Array.from(this.state.household.hhComponents.values()).map(
-              this.renderHouseholdComponent,
-              this
-            )}
-          </Accordion>
-        </div>
-        <div className="item2">
-          <XYPlot margin={{ left: 75, right: 75 }} width={800} height={600}>
-            <VerticalBarSeries
-              className="vertical-bar-series"
-              data={myData}
-              barWidth={0.8}
-            />
-            <XAxis />
-            <YAxis tickFormat={tick => d3.format(".2s")(tick)} />
-          </XYPlot>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-4">
+            <Accordion defaultActiveKey="0">
+              {Array.from(this.state.household.hhComponents.values()).map(
+                this.renderHouseholdComponent,
+                this
+              )}
+            </Accordion>
+          </div>
+          <div className="col-md-8">
+            <FlexibleWidthXYPlot margin={{ left: 75, right: 75 }} height={480}>
+              <VerticalBarSeries
+                className="vertical-bar-series"
+                data={myData}
+                barWidth={0.8}
+              />
+              <XAxis />
+              <YAxis tickFormat={tick => d3.format(".2s")(tick)} />
+            </FlexibleWidthXYPlot>
+          </div>
         </div>
       </div>
     );

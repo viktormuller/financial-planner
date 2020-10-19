@@ -4,6 +4,7 @@ import { MonetaryValue } from "./MonetaryValue";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
+import * as d3 from "d3-format";
 
 export class SavingsAccount extends Asset {
   interest: number = 0.02;
@@ -66,7 +67,9 @@ export class SavingsAccountInput extends Component<SavingsAccountProps> {
   }
 
   onChange(event) {
-    this.props.account.setOpeningBalance(new MonetaryValue(event.target.value));
+    this.props.account.setOpeningBalance(
+      new MonetaryValue(Number(event.target.value.replace(/,/g, "")))
+    );
     this.props.onChange(event, this.props.account);
   }
 
@@ -80,15 +83,20 @@ export class SavingsAccountInput extends Component<SavingsAccountProps> {
           <Card.Body>
             <Form>
               <Form.Group>
-                <Form.Label>
-                  Balance at the end of {this.props.account.yearOfOpening}
-                </Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="50000"
-                  value={this.props.account.getOpeningBalance().value}
-                  onChange={this.onChange.bind(this)}
-                />
+                <div className="row">
+                  <Form.Label className="col-md-8">
+                    Balance at the end of {this.props.account.yearOfOpening}
+                  </Form.Label>
+                  <Form.Control
+                    className="col-md-4 text-right"
+                    type="text"
+                    placeholder="50000"
+                    value={d3.format(",")(
+                      this.props.account.getOpeningBalance().value
+                    )}
+                    onChange={this.onChange.bind(this)}
+                  />
+                </div>
               </Form.Group>
             </Form>
           </Card.Body>
