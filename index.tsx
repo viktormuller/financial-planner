@@ -1,7 +1,6 @@
 import React, { ChangeEvent, Component } from "react";
 import { render } from "react-dom";
 import {
-  XYPlot,
   XAxis,
   YAxis,
   VerticalBarSeries,
@@ -20,6 +19,9 @@ import { HouseholdComponent } from "./HouseholdComponent";
 import { SavingsAccount, SavingsAccountInput } from "./SavingsAccount";
 import * as d3 from "d3-format";
 import Accordion from "react-bootstrap/Accordion";
+import Form from "react-bootstrap/Form";
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
 import { Children, ChildrenInput } from "./Children";
 
 interface AppProps {
@@ -47,6 +49,7 @@ class App extends Component<AppProps, AppState> {
     household.addComponent(children);
 
     this.onChange = this.onChange.bind(this);
+    this.addJob = this.addJob.bind(this);
     household.update();
     this.state = {
       household: household
@@ -67,6 +70,49 @@ class App extends Component<AppProps, AppState> {
     }, 500);
   }
 
+  addJob() {
+    var job = new Job(2020, 2055);
+    this.state.household.addComponent(job);
+    this.setState({ household: this.state.household });
+  }
+
+  renderIncomeComponents(
+    hhComponents: Map<string, HouseholdComponent>,
+    index: string = "0"
+  ): JSX.Element {
+    var ret = (
+      <Card>
+        <Accordion.Toggle as={Card.Header} eventKey={index}>
+          Income
+        </Accordion.Toggle>
+        <Accordion.Collapse eventKey={index}>
+          <Card.Body>
+            <Form>
+              {Array.from(hhComponents.values()).map(
+                (comp: HouseholdComponent, index) =>
+                  comp instanceof Job ? (
+                    <JobInputs
+                      job={comp as Job}
+                      onChange={this.onChange}
+                      index={String(index)}
+                    />
+                  ) : (
+                    ""
+                  )
+              )}
+              <div className="row">
+                <Button variant="outline-secondary" block onClick={this.addJob}>
+                  Add another job
+                </Button>
+              </div>
+            </Form>
+          </Card.Body>
+        </Accordion.Collapse>
+      </Card>
+    );
+    return ret;
+  }
+
   renderHouseholdComponent(
     comp: HouseholdComponent,
     index: number
@@ -74,18 +120,6 @@ class App extends Component<AppProps, AppState> {
     var ret = <div />;
 
     switch (comp.constructor) {
-      case Job: {
-        ret = (
-          <div>
-            <JobInputs
-              job={comp as Job}
-              onChange={this.onChange}
-              eventKey={String(index)}
-            />
-          </div>
-        );
-        break;
-      }
       case FullHouseholdExpense: {
         ret = (
           <div>
@@ -145,6 +179,7 @@ class App extends Component<AppProps, AppState> {
         <div className="row">
           <div className="col-md-4">
             <Accordion defaultActiveKey="0">
+              {this.renderIncomeComponents(this.state.household.hhComponents)}
               {Array.from(this.state.household.hhComponents.values()).map(
                 this.renderHouseholdComponent,
                 this
@@ -158,8 +193,11 @@ class App extends Component<AppProps, AppState> {
                 data={myData}
                 barWidth={0.8}
               />
-              <XAxis />
-              <YAxis tickFormat={tick => d3.format(".2s")(tick)} />
+              <XAxis title="Tax years" />
+              <YAxis
+                tickFormat={tick => d3.format(".2s")(tick)}
+                title="Net worth (GBP)"
+              />
             </FlexibleWidthXYPlot>
           </div>
         </div>

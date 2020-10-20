@@ -30,7 +30,7 @@ export default class Job extends HouseholdComponent {
 class JobProps {
   job: Job;
   onChange;
-  eventKey: string;
+  index: string;
 }
 
 export class JobInputs extends Component<JobProps> {
@@ -56,44 +56,43 @@ export class JobInputs extends Component<JobProps> {
 
   render() {
     return (
-      <Card>
-        <Accordion.Toggle as={Card.Header} eventKey={this.props.eventKey}>
-          Job
-        </Accordion.Toggle>
-        <Accordion.Collapse eventKey={this.props.eventKey}>
-          <Card.Body>
-            <Form>
-              <Form.Group>
-                <div className="row">
-                  <Form.Label className="col-md-8">
-                    Annual income (after tax)
-                  </Form.Label>
-                  <Form.Control
-                    className="col-md-4 text-right"
-                    type="text"
-                    name="startingIncome"
-                    placeholder="50000"
-                    value={d3.format(",")(this.props.job.startingIncome)}
-                    onChange={this.onChange.bind(this)}
-                  />
-                </div>
-                <div className="row">
-                  <Form.Label className="col-md-8">
-                    Year of retirment
-                  </Form.Label>
-                  <Form.Control
-                    className="col-md-4 text-right"
-                    name="endYear"
-                    type="number"
-                    value={this.props.job.endYear}
-                    onChange={this.onChange.bind(this)}
-                  />
-                </div>
-              </Form.Group>
-            </Form>
+      <React.Fragment>
+        <div className="row">
+          <Form.Label>{"Job " + this.props.index}</Form.Label>
+        </div>
+        <Form.Group>
+          <div className="row">
+            <Form.Label className="col-md-8">
+              Annual income (after tax)
+            </Form.Label>
+            <Form.Control
+              className="col-md-4 text-right"
+              type="text"
+              name="startingIncome"
+              placeholder="50000"
+              value={d3.format(",")(this.props.job.startingIncome)}
+              onChange={this.onChange.bind(this)}
+            />
+          </div>
+        </Form.Group>
+
+        <Form.Group>
+          <div className="row">
+            <Form.Label className="col-md-8">Year of retirment</Form.Label>
+            <Form.Control
+              className="col-md-4 text-right"
+              name="endYear"
+              type="number"
+              value={this.props.job.endYear}
+              onChange={this.onChange.bind(this)}
+            />
+          </div>
+        </Form.Group>
+      </React.Fragment>
+      /* </Form>
           </Card.Body>
         </Accordion.Collapse>
-      </Card>
+      </Card>*/
     );
   }
 }
