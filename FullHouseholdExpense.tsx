@@ -59,21 +59,21 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
               </Form.Group>
               <hr />
 
-             /* <Accordion defaultActiveKey="current_members">
+              <Accordion defaultActiveKey="current_members">
                 <Card>
                   <Accordion.Toggle as={Card.Header} eventKey="current_members">
                     Current members
                   </Accordion.Toggle>
                   <Accordion.Collapse eventKey="current_members">
-                    <Card.Body>*/
+                    <Card.Body>
                       <ChildrenInput
                         children={this.props.expense.children}
                         onChange={this.onChange}
                       />
-                  /*  </Card.Body>
+                    </Card.Body>
                   </Accordion.Collapse>
                 </Card>
-              </Accordion>*/
+              </Accordion>
             </Form>
           </Card.Body>
         </Accordion.Collapse>

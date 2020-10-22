@@ -118,45 +118,28 @@ class App extends Component<AppProps, AppState> {
     comp: HouseholdComponent,
     index: number
   ): JSX.Element {
-    var ret = <div />;
+    var ret;
 
     switch (comp.constructor) {
       case FullHouseholdExpense: {
         ret = (
-          <div>
-            <FullHHExpenseInput
-              expense={comp as FullHouseholdExpense}
-              onChange={this.onChange}
-              eventKey={String(index)}
-            />
-          </div>
-        );
-        break;
-      }
-      case SavingsAccount: {
-        ret = (
-          <div>
-            <SavingsAccountInput
-              account={comp as SavingsAccount}
-              onChange={this.onChange}
-              eventKey={String(index)}
-            />
-          </div>
-        );
-        break;
-      }
-      case Children: {
-        ret = (
-          <ChildrenInput
-            children={comp as Children}
+          <FullHHExpenseInput
+            expense={comp as FullHouseholdExpense}
             onChange={this.onChange}
             eventKey={String(index)}
           />
         );
         break;
       }
-      default: {
-        ret = <div />;
+      case SavingsAccount: {
+        ret = (
+          <SavingsAccountInput
+            account={comp as SavingsAccount}
+            onChange={this.onChange}
+            eventKey={String(index)}
+          />
+        );
+        break;
       }
     }
 

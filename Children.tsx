@@ -139,7 +139,8 @@ export class ChildrenInput extends Component<ChildrenProps> {
         </Accordion.Toggle>
         <Accordion.Collapse eventKey={this.props.eventKey}>
           <Card.Body>*/
-      <Form>
+      //<Form>
+      <React.Fragment>
         {this.props.children.yearsOfBirth.map((year, index) => (
           <Form.Group>
             <div className="row">
@@ -156,7 +157,8 @@ export class ChildrenInput extends Component<ChildrenProps> {
             </div>
           </Form.Group>
         ))}
-      </Form>
+      </React.Fragment>
+      //     </Form>
       /*    </Card.Body>
         </Accordion.Collapse>
       </Card>*/
