@@ -47,7 +47,9 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
             <Form>
               <Form.Group>
                 <div className="row">
-                  <Form.Label className="col-md-8">Annual expense</Form.Label>
+                  <Form.Label className="col-md-8">
+                    Annual expense today
+                  </Form.Label>
                   <Form.Control
                     className="col-md-4 text-right"
                     type="text"
@@ -65,6 +67,19 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
                     Current members
                   </Accordion.Toggle>
                   <Accordion.Collapse eventKey="current_members">
+                    <Card.Body>
+                      <ChildrenInput
+                        children={this.props.expense.children}
+                        onChange={this.onChange}
+                      />
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+                <Card>
+                  <Accordion.Toggle as={Card.Header} eventKey="future_members">
+                    Future members 
+                  </Accordion.Toggle>
+                  <Accordion.Collapse eventKey="future_members">
                     <Card.Body>
                       <ChildrenInput
                         children={this.props.expense.children}
