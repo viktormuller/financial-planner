@@ -118,7 +118,6 @@ export class Children extends HouseholdComponent {
 class ChildrenProps {
   children: Children;
   onChange;
-  eventKey: string;
 }
 
 export class ChildrenInput extends Component<ChildrenProps> {
@@ -134,34 +133,33 @@ export class ChildrenInput extends Component<ChildrenProps> {
 
   render() {
     return (
-      <Card>
+      /*<Card>        
         <Accordion.Toggle as={Card.Header} eventKey={this.props.eventKey}>
           Children
         </Accordion.Toggle>
         <Accordion.Collapse eventKey={this.props.eventKey}>
-          <Card.Body>
-            <Form>
-              <Form.Group>
-                {this.props.children.yearsOfBirth.map((year, index) => (
-                  <div className="row">
-                    <Form.Label className="col-md-8">
-                      Child {index + 1} year of birth
-                    </Form.Label>
-                    <Form.Control
-                      className="col-md-4 text-right"
-                      type="number"
-                      name={String(index)}
-                      placeholder="2022"
-                      value={year}
-                      onChange={this.onChange.bind(this)}
-                    />
-                  </div>
-                ))}
-              </Form.Group>
-            </Form>
-          </Card.Body>
+          <Card.Body>*/
+      <Form>
+        {this.props.children.yearsOfBirth.map((year, index) => (
+          <Form.Group>
+            <div className="row">
+              <Form.Label className="col-md-8">
+                Child {index + 1} year of birth
+              </Form.Label>
+              <Form.Control
+                className="col-md-4 text-right"
+                type="number"
+                name={String(index)}
+                value={year}
+                onChange={this.onChange.bind(this)}
+              />
+            </div>
+          </Form.Group>
+        ))}
+      </Form>
+      /*    </Card.Body>
         </Accordion.Collapse>
-      </Card>
+      </Card>*/
     );
   }
 }

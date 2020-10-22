@@ -40,13 +40,14 @@ class App extends Component<AppProps, AppState> {
 
     var job = new Job(2020, 2055);
     household.addComponent(job);
+    var children = new Children();
+    children.yearsOfBirth = [2022, 2024];
+    household.addComponent(children);
 
     var hhExpense = new FullHouseholdExpense();
     household.addComponent(hhExpense);
 
-    var children = new Children();
-    children.yearsOfBirth = [2022, 2024];
-    household.addComponent(children);
+    hhExpense.children = children;
 
     this.onChange = this.onChange.bind(this);
     this.addJob = this.addJob.bind(this);
