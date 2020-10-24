@@ -23,6 +23,7 @@ import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Children, ChildrenInput } from "./Children";
+import { HouseholdMembers } from "./HouseholdMembers";
 
 interface AppProps {
   household: Household;
@@ -168,6 +169,7 @@ class App extends Component<AppProps, AppState> {
                 this.renderHouseholdComponent,
                 this
               )}
+              <HouseholdMembers household={this.props.household} />
             </Accordion>
           </div>
           <div className="col-md-8">
