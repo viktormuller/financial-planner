@@ -1,15 +1,17 @@
 import React, { Component } from "react";
 import { Accordion, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
-import { Household } from "./Household";
+import { Adults } from "./Adults";
+import { Children, ChildrenInput } from "./Children";
 
 interface HouseholdMembersProps {
-  household: Household;
+  adults: Adults;
+  children: Children;
   onChange;
 }
 
 interface HouseholdMembersState {
-  currentAdults: number;
-  futureAdults: number[];
+  adults: Adults;
+  children: Children;
 }
 
 export class HouseholdMembers extends Component<
@@ -19,26 +21,36 @@ export class HouseholdMembers extends Component<
   constructor(props) {
     super(props);
     this.state = {
-      currentAdults: 2,
-      futureAdults: [2022]
+      adults: this.props.adults,
+      children: this.props.children
     };
+    console.debug(
+      "Current children: " + this.props.children.yearsOfBirth.length
+    );
   }
 
   onCurrentAdultsChanged(event) {
+    this.state.adults.currentAdults = Number(event.target.value);
     this.setState({
-      currentAdults: Number(event.target.value)
+      adults: this.state.adults
     });
     this.props.onChange(event);
   }
   onFutureAdultsChanged(event) {
     var newFutureAdults = new Array<number>();
     for (let i: number = 0; i < event.target.value; i++) {
-      newFutureAdults.push(this.state.futureAdults[i]);
+      newFutureAdults.push(this.state.adults.futureAdults[i]);
     }
+    this.state.adults.futureAdults = newFutureAdults;
     this.setState({
-      futureAdults: newFutureAdults
+      adults: this.state.adults
     });
     this.props.onChange(event);
+  }
+
+  onYearOfJoiningChange(event) {
+    this.state.adults.futureAdults[event.target.name] = event.target.value;
+    this.setState({ adults: this.state.adults });
   }
 
   render() {
@@ -59,7 +71,7 @@ export class HouseholdMembers extends Component<
                     <Form.Control
                       as="select"
                       type="number"
-                      value={String(this.state.currentAdults)}
+                      value={String(this.state.adults.currentAdults)}
                       onChange={this.onCurrentAdultsChanged.bind(this)}
                     >
                       <option>1</option>
@@ -68,6 +80,7 @@ export class HouseholdMembers extends Component<
                   </Col>
                 </Row>
               </FormGroup>
+              <hr />
               <FormGroup>
                 <Row>
                   <Col className="col-sm-8">
@@ -79,7 +92,7 @@ export class HouseholdMembers extends Component<
                     <Form.Control
                       as="select"
                       type="number"
-                      value={this.state.futureAdults.length}
+                      value={this.state.adults.futureAdults.length}
                       onChange={this.onFutureAdultsChanged.bind(this)}
                     >
                       <option>0</option>
@@ -89,22 +102,31 @@ export class HouseholdMembers extends Component<
                   </Col>
                 </Row>
               </FormGroup>
-              {this.state.futureAdults.map((year: number, index) => (
+              {this.state.adults.futureAdults.map((year: number, index) => (
                 <FormGroup>
                   <Row>
                     <Col className="col-sm-8">
-                      {" "}
                       <Form.Label>
-                        Joining year for Adult{" "}
-                        {index + this.state.currentAdults + 1}
+                        Joining year for Adult
+                        {index + this.state.adults.currentAdults + 1}
                       </Form.Label>
                     </Col>
                     <Col className="col-sm-4">
-                      <Form.Control type="number" value={year} />
-                    </Col>{" "}
+                      <Form.Control
+                        type="number"
+                        value={year}
+                        name={index}
+                        onChange={this.onYearOfJoiningChange.bind(this)}
+                      />
+                    </Col>
                   </Row>
                 </FormGroup>
               ))}
+              <hr />
+              <ChildrenInput
+                children={this.state.children}
+                onChange={this.props.onChange}
+              />
             </Form>
           </Card.Body>
         </Accordion.Collapse>

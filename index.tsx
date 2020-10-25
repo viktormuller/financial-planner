@@ -41,9 +41,9 @@ class App extends Component<AppProps, AppState> {
 
     var job = new Job(2020, 2055);
     household.addComponent(job);
-    var children = new Children();
-    children.yearsOfBirth = [2022, 2024];
+    var children = new Children([2022, 2024]);
     household.addComponent(children);
+    household.children = children;
 
     var hhExpense = new FullHouseholdExpense();
     household.addComponent(hhExpense);
@@ -124,7 +124,7 @@ class App extends Component<AppProps, AppState> {
           <FullHHExpenseInput
             expense={comp as FullHouseholdExpense}
             onChange={this.onChange}
-            eventKey={String(index)}
+            eventKey="hh_expense"
           />
         );
         break;
@@ -134,7 +134,7 @@ class App extends Component<AppProps, AppState> {
           <SavingsAccountInput
             account={comp as SavingsAccount}
             onChange={this.onChange}
-            eventKey={String(index)}
+            eventKey="savings"
           />
         );
         break;
@@ -167,7 +167,8 @@ class App extends Component<AppProps, AppState> {
                 this
               )}
               <HouseholdMembers
-                household={this.props.household}
+                adults={this.state.household.adults}
+                children={this.state.household.children}
                 onChange={this.onChange}
               />
             </Accordion>

@@ -10,7 +10,7 @@ import { Children, ChildrenInput } from "./Children";
 
 export class FullHouseholdExpense extends HouseholdComponent {
   startingExpense: number = 30000;
-  children: Children = new Children();
+  children: Children = new Children([]);
 
   expense(year: number): MonetaryValue {
     return new MonetaryValue(this.startingExpense);
@@ -59,36 +59,6 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
                   />
                 </div>
               </Form.Group>
-              <hr />
-
-              <Accordion defaultActiveKey="current_members">
-                <Card>
-                  <Accordion.Toggle as={Card.Header} eventKey="current_members">
-                    Current members
-                  </Accordion.Toggle>
-                  <Accordion.Collapse eventKey="current_members">
-                    <Card.Body>
-                      <ChildrenInput
-                        children={this.props.expense.children}
-                        onChange={this.onChange}
-                      />
-                    </Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-                <Card>
-                  <Accordion.Toggle as={Card.Header} eventKey="future_members">
-                    Future members 
-                  </Accordion.Toggle>
-                  <Accordion.Collapse eventKey="future_members">
-                    <Card.Body>
-                      <ChildrenInput
-                        children={this.props.expense.children}
-                        onChange={this.onChange}
-                      />
-                    </Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-              </Accordion>
             </Form>
           </Card.Body>
         </Accordion.Collapse>

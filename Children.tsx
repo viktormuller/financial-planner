@@ -8,6 +8,7 @@ import Accordion from "react-bootstrap/Accordion";
 
 export class Children extends HouseholdComponent {
   yearsOfBirth: number[];
+
   //TODO: add single parent version, inflate , move to config file
   //Source: cpag.org 2019 https://cpag.org.uk/sites/default/files/files/policypost/CostofaChild2019_web.pdf
   static costOfChild = [
@@ -92,6 +93,12 @@ export class Children extends HouseholdComponent {
       94.88 * 52
     ]
   ];
+
+  constructor(yearsOfBirth: number[]) {
+    super();
+    this.yearsOfBirth = yearsOfBirth;
+  }
+
   //Handle out of order yearsOfBirth by sorting yearsOfBirth array
   expense(year: number): MonetaryValue {
     console.debug("Caculating expense for Children for year " + year);

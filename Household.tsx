@@ -1,8 +1,10 @@
+import { Adults } from "./Adults";
 import { Asset } from "./Asset";
+import { Children } from "./Children";
 import { CurrencyCode } from "./CurrencyCode";
-import { Expense } from "./Expense";
+
 import { HouseholdComponent } from "./HouseholdComponent";
-import { IncomeSource } from "./IncomeSource";
+
 import { MonetaryValue } from "./MonetaryValue";
 import { SavingsAccount } from "./SavingsAccount";
 
@@ -14,6 +16,8 @@ export class Household {
   pensionAccounts: Asset[] = new Array<Asset>();
   taxfreeAccounts: Asset[] = new Array<Asset>();
   afterTaxAccounts: Asset[] = new Array<Asset>();
+  children: Children = new Children([]);
+  adults: Adults = new Adults(2, []);
 
   netWorthByYear: Map<number, MonetaryValue> = new Map<number, MonetaryValue>();
 
