@@ -4,6 +4,7 @@ import { Household } from "./Household";
 
 interface HouseholdMembersProps {
   household: Household;
+  onChange;
 }
 
 interface HouseholdMembersState {
@@ -22,6 +23,24 @@ export class HouseholdMembers extends Component<
       futureAdults: [2022]
     };
   }
+
+  onCurrentAdultsChanged(event) {
+    this.setState({
+      currentAdults: Number(event.target.value)
+    });
+    this.props.onChange(event);
+  }
+  onFutureAdultsChanged(event) {
+    var newFutureAdults = new Array<number>();
+    for (let i: number = 0; i < event.target.value; i++) {
+      newFutureAdults.push(this.state.futureAdults[i]);
+    }
+    this.setState({
+      futureAdults: newFutureAdults
+    });
+    this.props.onChange(event);
+  }
+
   render() {
     return (
       <Card>
@@ -41,6 +60,7 @@ export class HouseholdMembers extends Component<
                       as="select"
                       type="number"
                       value={String(this.state.currentAdults)}
+                      onChange={this.onCurrentAdultsChanged.bind(this)}
                     >
                       <option>1</option>
                       <option>2</option>
@@ -60,6 +80,7 @@ export class HouseholdMembers extends Component<
                       as="select"
                       type="number"
                       value={this.state.futureAdults.length}
+                      onChange={this.onFutureAdultsChanged.bind(this)}
                     >
                       <option>0</option>
                       <option>1</option>

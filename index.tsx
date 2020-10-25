@@ -59,10 +59,7 @@ class App extends Component<AppProps, AppState> {
     this.recalcTimeout = 0;
   }
 
-  onChange(
-    event: React.ChangeEvent<HTMLInputElement>,
-    comp: HouseholdComponent
-  ) {
+  onChange(event: React.ChangeEvent<HTMLInputElement>) {
     if (this.recalcTimeout) clearTimeout(this.recalcTimeout);
 
     this.setState({ household: this.state.household });
@@ -169,7 +166,10 @@ class App extends Component<AppProps, AppState> {
                 this.renderHouseholdComponent,
                 this
               )}
-              <HouseholdMembers household={this.props.household} />
+              <HouseholdMembers
+                household={this.props.household}
+                onChange={this.onChange}
+              />
             </Accordion>
           </div>
           <div className="col-md-8">
