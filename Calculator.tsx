@@ -41,6 +41,7 @@ export class Calculator {
         )
       );
     }
+    return this.assets.netWorthSeries();
   }
 
   netWorthSeries(): Map<number, MonetaryValue> {

@@ -23,12 +23,14 @@ import { Children } from "./Children";
 import { HouseholdMembers } from "./HouseholdMembers";
 import { Calculator } from "./Calculator";
 import { Adult } from "./Adult";
+import { MonetaryValue } from "./MonetaryValue";
 
 interface AppProps {
   household: Household;
 }
 interface AppState {
   household: Household;
+  netWorthSeries: Map<number, MonetaryValue>;
 }
 
 class App extends Component<AppProps, AppState> {
@@ -51,11 +53,10 @@ class App extends Component<AppProps, AppState> {
 
     this.calculator = new Calculator(household);
 
-    this.calculator.update();
-
     this.onChange = this.onChange.bind(this);
     this.state = {
-      household: household
+      household: household,
+      netWorthSeries: this.calculator.update()
     };
     this.recalcTimeout = 0;
   }
@@ -65,8 +66,7 @@ class App extends Component<AppProps, AppState> {
 
     this.setState({ household: this.state.household });
     this.recalcTimeout = setTimeout(() => {
-      this.calculator.update();
-      this.setState({ household: this.state.household });
+      this.setState({ netWorthSeries: this.calculator.update() });
     }, 500);
   }
 
@@ -83,7 +83,7 @@ class App extends Component<AppProps, AppState> {
                 <JobInputs
                   job={adult.job}
                   onChange={this.onChange}
-                  index={String(index)}
+                  index={String(index + 1)}
                 />
               ))}
             </Form>
@@ -96,7 +96,7 @@ class App extends Component<AppProps, AppState> {
 
   render() {
     const myData: any[] = new Array<any>();
-    const netWorthSeriesEntries = this.calculator.netWorthSeries().entries();
+    const netWorthSeriesEntries = this.state.netWorthSeries.entries();
     for (let [year, amount] of netWorthSeriesEntries) {
       myData.push({
         x: year,
@@ -110,8 +110,7 @@ class App extends Component<AppProps, AppState> {
           <div className="col-md-4">
             <Accordion defaultActiveKey="members">
               <HouseholdMembers
-                adults={this.state.household.adults}
-                children={this.state.household.children}
+                household={this.state.household}
                 onChange={this.onChange}
               />
               <FullHHExpenseInput

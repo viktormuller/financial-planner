@@ -2,18 +2,17 @@ import React, { Component } from "react";
 import { Accordion, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { Adult } from "./Adult";
 import { Children, ChildrenInput } from "./Children";
+import { Household } from "./Household";
 
 interface HouseholdMembersProps {
-  adults: Adult[];
-  children: Children;
+  household: Household;
   onChange;
 }
 
 interface HouseholdMembersState {
-  adults: Adult[];
+  household: Household;
   currentAdults: Adult[];
   futureAdults: Adult[];
-  children: Children;
 }
 
 export class HouseholdMembers extends Component<
@@ -22,21 +21,19 @@ export class HouseholdMembers extends Component<
 > {
   constructor(props) {
     super(props);
-    if (this.props.adults) {
-      console.debug(this.props.adults);
-      var currentAdults = this.props.adults.filter(
+    if (this.props.household.adults) {
+      var currentAdults = this.props.household.adults.filter(
         adult => adult.yearOfJoining < 0
       );
-      var futureAdults = this.props.adults.filter(
+      var futureAdults = this.props.household.adults.filter(
         adult => adult.yearOfJoining >= 0
       );
     }
 
     this.state = {
-      adults: this.props.adults,
+      household: this.props.household,
       currentAdults: currentAdults,
-      futureAdults: futureAdults,
-      children: this.props.children
+      futureAdults: futureAdults
     };
   }
 
@@ -58,11 +55,14 @@ export class HouseholdMembers extends Component<
 
     for (let i: number = 0; i < adultsToRemove; i++) {
       var adultToRemove = newAdultsArray.pop();
-      this.state.adults.splice(this.state.adults.indexOf(adultToRemove), 1);
+      this.state.household.adults.splice(
+        this.state.household.adults.indexOf(adultToRemove),
+        1
+      );
     }
 
     this.setState({
-      adults: this.state.adults,
+      household: this.state.household,
       currentAdults: newAdultsArray
     });
     this.props.onChange(event);
@@ -86,11 +86,14 @@ export class HouseholdMembers extends Component<
 
     for (let i: number = 0; i < adultsToRemove; i++) {
       var adultToRemove = newAdultsArray.pop();
-      this.state.adults.splice(this.state.adults.indexOf(adultToRemove), 1);
+      this.state.household.adults.splice(
+        this.state.household.adults.indexOf(adultToRemove),
+        1
+      );
     }
 
     this.setState({
-      adults: this.state.adults,
+      household: this.state.household,
       futureAdults: newAdultsArray
     });
     this.props.onChange(event);
@@ -100,9 +103,10 @@ export class HouseholdMembers extends Component<
     this.state.futureAdults[event.target.name].yearOfJoining =
       event.target.value;
     this.setState({
-      adults: this.state.adults,
+      household: this.state.household,
       futureAdults: this.state.futureAdults
     });
+    this.props.onChange(event);
   }
 
   render() {
@@ -179,7 +183,7 @@ export class HouseholdMembers extends Component<
               ))}
               <hr />
               <ChildrenInput
-                children={this.state.children}
+                children={this.state.household.children}
                 onChange={this.props.onChange}
               />
             </Form>
