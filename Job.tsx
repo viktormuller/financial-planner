@@ -1,21 +1,17 @@
 import React from "react";
 import { Component } from "react";
-
-import { HouseholdComponent } from "./HouseholdComponent";
-
 import { MonetaryValue } from "./MonetaryValue";
-import Card from "react-bootstrap/Card";
+
 import Form from "react-bootstrap/Form";
-import Accordion from "react-bootstrap/Accordion";
+
 import * as d3 from "d3-format";
 
-export default class Job extends HouseholdComponent {
+export default class Job {
   private startYear: number = new Date().getFullYear();
   endYear: number;
   startingIncome: number = 50000;
 
   constructor(pStartYear?: number, pEndYear?: number) {
-    super();
     if (pEndYear) this.endYear = pEndYear;
     if (pStartYear) this.startYear = pStartYear;
   }

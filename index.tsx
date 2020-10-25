@@ -8,22 +8,21 @@ import {
 } from "react-vis";
 import "./style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { MonetaryValue } from "./MonetaryValue";
 import { Household } from "./Household";
 import Job, { JobInputs } from "./Job";
 import {
   FullHHExpenseInput,
   FullHouseholdExpense
 } from "./FullHouseholdExpense";
-import { HouseholdComponent } from "./HouseholdComponent";
-import { SavingsAccount, SavingsAccountInput } from "./SavingsAccount";
+import { SavingsAccountInput } from "./SavingsAccount";
 import * as d3 from "d3-format";
 import Accordion from "react-bootstrap/Accordion";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
-import { Children, ChildrenInput } from "./Children";
+import { Children } from "./Children";
 import { HouseholdMembers } from "./HouseholdMembers";
+import { Calculator } from "./Calculator";
+import { Adult } from "./Adult";
 
 interface AppProps {
   household: Household;
@@ -34,25 +33,27 @@ interface AppState {
 
 class App extends Component<AppProps, AppState> {
   recalcTimeout: number;
+  calculator: Calculator;
 
   constructor(props) {
     super(props);
     var household = props.household;
+    var headOfHH = new Adult();
 
     var job = new Job(2020, 2055);
-    household.addComponent(job);
+    headOfHH.job = job;
+    var adults = [headOfHH];
+
     var children = new Children([2022, 2024]);
-    household.addComponent(children);
+
     household.children = children;
+    household.adults = adults;
 
-    var hhExpense = new FullHouseholdExpense();
-    household.addComponent(hhExpense);
+    this.calculator = new Calculator(household);
 
-    hhExpense.children = children;
+    this.calculator.update();
 
     this.onChange = this.onChange.bind(this);
-    this.addJob = this.addJob.bind(this);
-    household.update();
     this.state = {
       household: household
     };
@@ -64,46 +65,27 @@ class App extends Component<AppProps, AppState> {
 
     this.setState({ household: this.state.household });
     this.recalcTimeout = setTimeout(() => {
-      this.state.household.update();
+      this.calculator.update();
       this.setState({ household: this.state.household });
     }, 500);
   }
 
-  addJob() {
-    var job = new Job(2020, 2055);
-    this.state.household.addComponent(job);
-    this.setState({ household: this.state.household });
-  }
-
-  renderIncomeComponents(
-    hhComponents: Map<string, HouseholdComponent>,
-    index: string = "0"
-  ): JSX.Element {
+  renderIncomeComponents(household: Household): JSX.Element {
     var ret = (
       <Card>
-        <Accordion.Toggle as={Card.Header} eventKey={index}>
+        <Accordion.Toggle as={Card.Header} eventKey="income">
           Income
         </Accordion.Toggle>
-        <Accordion.Collapse eventKey={index}>
+        <Accordion.Collapse eventKey="income">
           <Card.Body>
             <Form>
-              {Array.from(hhComponents.values()).map(
-                (comp: HouseholdComponent, index) =>
-                  comp instanceof Job ? (
-                    <JobInputs
-                      job={comp as Job}
-                      onChange={this.onChange}
-                      index={String(index)}
-                    />
-                  ) : (
-                    ""
-                  )
-              )}
-              <div className="row">
-                <Button variant="outline-secondary" block onClick={this.addJob}>
-                  Add another job
-                </Button>
-              </div>
+              {household.adults.map((adult, index) => (
+                <JobInputs
+                  job={adult.job}
+                  onChange={this.onChange}
+                  index={String(index)}
+                />
+              ))}
             </Form>
           </Card.Body>
         </Accordion.Collapse>
@@ -112,43 +94,9 @@ class App extends Component<AppProps, AppState> {
     return ret;
   }
 
-  renderHouseholdComponent(
-    comp: HouseholdComponent,
-    index: number
-  ): JSX.Element {
-    var ret;
-
-    switch (comp.constructor) {
-      case FullHouseholdExpense: {
-        ret = (
-          <FullHHExpenseInput
-            expense={comp as FullHouseholdExpense}
-            onChange={this.onChange}
-            eventKey="hh_expense"
-          />
-        );
-        break;
-      }
-      case SavingsAccount: {
-        ret = (
-          <SavingsAccountInput
-            account={comp as SavingsAccount}
-            onChange={this.onChange}
-            eventKey="savings"
-          />
-        );
-        break;
-      }
-    }
-
-    return ret;
-  }
-
   render() {
     const myData: any[] = new Array<any>();
-    const netWorthSeriesEntries = this.state.household
-      .netWorthSeries()
-      .entries();
+    const netWorthSeriesEntries = this.calculator.netWorthSeries().entries();
     for (let [year, amount] of netWorthSeriesEntries) {
       myData.push({
         x: year,
@@ -160,16 +108,22 @@ class App extends Component<AppProps, AppState> {
       <div className="container">
         <div className="row">
           <div className="col-md-4">
-            <Accordion defaultActiveKey="0">
-              {this.renderIncomeComponents(this.state.household.hhComponents)}
-              {Array.from(this.state.household.hhComponents.values()).map(
-                this.renderHouseholdComponent,
-                this
-              )}
+            <Accordion defaultActiveKey="members">
               <HouseholdMembers
                 adults={this.state.household.adults}
                 children={this.state.household.children}
                 onChange={this.onChange}
+              />
+              <FullHHExpenseInput
+                household={this.state.household}
+                onChange={this.onChange}
+                eventKey="hh_expense"
+              />
+              {this.renderIncomeComponents(this.state.household)}
+              <SavingsAccountInput
+                account={this.state.household.afterTaxAccount}
+                onChange={this.onChange}
+                eventKey="savings"
               />
             </Accordion>
           </div>

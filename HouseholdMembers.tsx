@@ -1,16 +1,18 @@
 import React, { Component } from "react";
 import { Accordion, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
-import { Adults } from "./Adults";
+import { Adult } from "./Adult";
 import { Children, ChildrenInput } from "./Children";
 
 interface HouseholdMembersProps {
-  adults: Adults;
+  adults: Adult[];
   children: Children;
   onChange;
 }
 
 interface HouseholdMembersState {
-  adults: Adults;
+  adults: Adult[];
+  currentAdults: Adult[];
+  futureAdults: Adult[];
   children: Children;
 }
 
@@ -20,37 +22,87 @@ export class HouseholdMembers extends Component<
 > {
   constructor(props) {
     super(props);
+    if (this.props.adults) {
+      console.debug(this.props.adults);
+      var currentAdults = this.props.adults.filter(
+        adult => adult.yearOfJoining < 0
+      );
+      var futureAdults = this.props.adults.filter(
+        adult => adult.yearOfJoining >= 0
+      );
+    }
+
     this.state = {
       adults: this.props.adults,
+      currentAdults: currentAdults,
+      futureAdults: futureAdults,
       children: this.props.children
     };
-    console.debug(
-      "Current children: " + this.props.children.yearsOfBirth.length
-    );
   }
 
   onCurrentAdultsChanged(event) {
-    this.state.adults.currentAdults = Number(event.target.value);
+    var adultsToAdd = Math.max(
+      0,
+      event.target.value - this.state.currentAdults.length
+    );
+    var adultsToRemove = Math.max(
+      0,
+      this.state.currentAdults.length - event.target.value
+    );
+
+    var newAdultsArray = new Array(...this.state.currentAdults);
+
+    for (let i: number = 0; i < adultsToAdd; i++) {
+      newAdultsArray.push(new Adult());
+    }
+
+    for (let i: number = 0; i < adultsToRemove; i++) {
+      var adultToRemove = newAdultsArray.pop();
+      this.state.adults.splice(this.state.adults.indexOf(adultToRemove), 1);
+    }
+
     this.setState({
-      adults: this.state.adults
+      adults: this.state.adults,
+      currentAdults: newAdultsArray
     });
     this.props.onChange(event);
   }
   onFutureAdultsChanged(event) {
-    var newFutureAdults = new Array<number>();
-    for (let i: number = 0; i < event.target.value; i++) {
-      newFutureAdults.push(this.state.adults.futureAdults[i]);
+    var adultsToAdd = Math.max(
+      0,
+      event.target.value - this.state.futureAdults.length
+    );
+    var adultsToRemove = Math.max(
+      0,
+      this.state.futureAdults.length - event.target.value
+    );
+
+    var newAdultsArray = new Array(...this.state.futureAdults);
+
+    for (let i: number = 0; i < adultsToAdd; i++) {
+      //Add a new member in 2 years by default
+      newAdultsArray.push(new Adult(new Date().getFullYear() + 2));
     }
-    this.state.adults.futureAdults = newFutureAdults;
+
+    for (let i: number = 0; i < adultsToRemove; i++) {
+      var adultToRemove = newAdultsArray.pop();
+      this.state.adults.splice(this.state.adults.indexOf(adultToRemove), 1);
+    }
+
     this.setState({
-      adults: this.state.adults
+      adults: this.state.adults,
+      futureAdults: newAdultsArray
     });
     this.props.onChange(event);
   }
 
   onYearOfJoiningChange(event) {
-    this.state.adults.futureAdults[event.target.name] = event.target.value;
-    this.setState({ adults: this.state.adults });
+    this.state.futureAdults[event.target.name].yearOfJoining =
+      event.target.value;
+    this.setState({
+      adults: this.state.adults,
+      futureAdults: this.state.futureAdults
+    });
   }
 
   render() {
@@ -70,8 +122,9 @@ export class HouseholdMembers extends Component<
                   <Col className="col-sm-4">
                     <Form.Control
                       as="select"
+                      className="text-right"
                       type="number"
-                      value={String(this.state.adults.currentAdults)}
+                      value={this.state.currentAdults.length}
                       onChange={this.onCurrentAdultsChanged.bind(this)}
                     >
                       <option>1</option>
@@ -90,9 +143,10 @@ export class HouseholdMembers extends Component<
                   </Col>
                   <Col className="col-sm-4">
                     <Form.Control
+                      className="text-right"
                       as="select"
                       type="number"
-                      value={this.state.adults.futureAdults.length}
+                      value={this.state.futureAdults.length}
                       onChange={this.onFutureAdultsChanged.bind(this)}
                     >
                       <option>0</option>
@@ -102,19 +156,20 @@ export class HouseholdMembers extends Component<
                   </Col>
                 </Row>
               </FormGroup>
-              {this.state.adults.futureAdults.map((year: number, index) => (
+              {this.state.futureAdults.map((adult, index) => (
                 <FormGroup>
                   <Row>
                     <Col className="col-sm-8">
                       <Form.Label>
-                        Joining year for Adult
-                        {index + this.state.adults.currentAdults + 1}
+                        Joining year for Adult{" "}
+                        {index + this.state.currentAdults.length + 1}
                       </Form.Label>
                     </Col>
                     <Col className="col-sm-4">
                       <Form.Control
+                        className="text-right"
                         type="number"
-                        value={year}
+                        value={adult.yearOfJoining}
                         name={index}
                         onChange={this.onYearOfJoiningChange.bind(this)}
                       />

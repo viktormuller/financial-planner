@@ -1,24 +1,34 @@
 import React from "react";
 import { Component } from "react";
-import { HouseholdComponent } from "./HouseholdComponent";
 import { MonetaryValue } from "./MonetaryValue";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
 import * as d3 from "d3-format";
-import { Children, ChildrenInput } from "./Children";
+import { Household } from "./Household";
 
-export class FullHouseholdExpense extends HouseholdComponent {
-  startingExpense: number = 30000;
-  children: Children = new Children([]);
+export class FullHouseholdExpense {
+  household: Household;
+
+  constructor(household: Household) {
+    this.household = household;
+  }
 
   expense(year: number): MonetaryValue {
-    return new MonetaryValue(this.startingExpense);
+    return new MonetaryValue(this.household.startingExpense);
+  }
+
+  setStartingExpense(startingExpense: number) {
+    this.household.startingExpense = startingExpense;
+  }
+
+  getStartingExpense() {
+    return this.household.startingExpense;
   }
 }
 
 class FullHHExpenseProps {
-  expense: FullHouseholdExpense;
+  household: Household;
   onChange;
   eventKey: string;
 }
@@ -30,10 +40,10 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
   }
 
   onChange(event) {
-    this.props.expense.startingExpense = Number(
+    this.props.household.startingExpense = Number(
       event.target.value.replace(/,/g, "")
     );
-    this.props.onChange(event, this.props.expense);
+    this.props.onChange(event, this.props.household);
   }
 
   render() {
@@ -54,7 +64,7 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
                     className="col-md-4 text-right"
                     type="text"
                     placeholder="30000"
-                    value={d3.format(",")(this.props.expense.startingExpense)}
+                    value={d3.format(",")(this.props.household.startingExpense)}
                     onChange={this.onChange}
                   />
                 </div>

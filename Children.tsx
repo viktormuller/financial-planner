@@ -1,12 +1,10 @@
 import React from "react";
 import { Component } from "react";
-import { HouseholdComponent } from "./HouseholdComponent";
 import { MonetaryValue } from "./MonetaryValue";
-import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
-import Accordion from "react-bootstrap/Accordion";
+import { Col, Row } from "react-bootstrap";
 
-export class Children extends HouseholdComponent {
+export class Children {
   yearsOfBirth: number[];
 
   //TODO: add single parent version, inflate , move to config file
@@ -95,7 +93,6 @@ export class Children extends HouseholdComponent {
   ];
 
   constructor(yearsOfBirth: number[]) {
-    super();
     this.yearsOfBirth = yearsOfBirth;
   }
 
@@ -140,35 +137,26 @@ export class ChildrenInput extends Component<ChildrenProps> {
 
   render() {
     return (
-      /*<Card>        
-        <Accordion.Toggle as={Card.Header} eventKey={this.props.eventKey}>
-          Children
-        </Accordion.Toggle>
-        <Accordion.Collapse eventKey={this.props.eventKey}>
-          <Card.Body>*/
-      //<Form>
       <React.Fragment>
         {this.props.children.yearsOfBirth.map((year, index) => (
           <Form.Group>
-            <div className="row">
-              <Form.Label className="col-md-8">
-                Child {index + 1} year of birth
-              </Form.Label>
-              <Form.Control
-                className="col-md-4 text-right"
-                type="number"
-                name={String(index)}
-                value={year}
-                onChange={this.onChange.bind(this)}
-              />
-            </div>
+            <Row>
+              <Col className="col-sm-8">
+                <Form.Label>Child {index + 1} year of birth</Form.Label>
+              </Col>
+              <Col className="col-sm-4">
+                <Form.Control
+                  className="text-right"
+                  type="number"
+                  name={String(index)}
+                  value={year}
+                  onChange={this.onChange.bind(this)}
+                />
+              </Col>
+            </Row>
           </Form.Group>
         ))}
       </React.Fragment>
-      //     </Form>
-      /*    </Card.Body>
-        </Accordion.Collapse>
-      </Card>*/
     );
   }
 }
