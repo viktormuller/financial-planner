@@ -13,8 +13,8 @@ export class SavingsAccount extends Asset {
 
   constructor(
     openingBalance: MonetaryValue = new MonetaryValue(0),
-    pInterest: number = 0.02,
-    year = 2020
+    year = 2019,
+    pInterest: number = 0.02
   ) {
     super();
     this.closingValues.set(year, openingBalance);

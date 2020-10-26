@@ -1,7 +1,6 @@
-import { HouseholdComponent } from "./HouseholdComponent";
 import { MonetaryValue } from "./MonetaryValue";
 
-export class Asset extends HouseholdComponent {
+export class Asset {
   protected closingValues: Map<number, MonetaryValue> = new Map<
     number,
     MonetaryValue

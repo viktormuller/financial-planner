@@ -1,13 +1,12 @@
 import React from "react";
 import { Component } from "react";
-import { HouseholdComponent } from "./HouseholdComponent";
 import { MonetaryValue } from "./MonetaryValue";
-import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
-import Accordion from "react-bootstrap/Accordion";
+import { Col, Row } from "react-bootstrap";
 
-export class Children extends HouseholdComponent {
+export class Children {
   yearsOfBirth: number[];
+
   //TODO: add single parent version, inflate , move to config file
   //Source: cpag.org 2019 https://cpag.org.uk/sites/default/files/files/policypost/CostofaChild2019_web.pdf
   static costOfChild = [
@@ -92,6 +91,11 @@ export class Children extends HouseholdComponent {
       94.88 * 52
     ]
   ];
+
+  constructor(yearsOfBirth: number[]) {
+    this.yearsOfBirth = yearsOfBirth;
+  }
+
   //Handle out of order yearsOfBirth by sorting yearsOfBirth array
   expense(year: number): MonetaryValue {
     console.debug("Caculating expense for Children for year " + year);
@@ -120,48 +124,57 @@ class ChildrenProps {
   onChange;
 }
 
-export class ChildrenInput extends Component<ChildrenProps> {
+class ChildrenState {
+  children: Children;
+}
+
+export class ChildrenInput extends Component<ChildrenProps, ChildrenState> {
   constructor(props) {
     super(props);
+    this.state = {
+      children: this.props.children
+    };
   }
 
   onChange(event) {
     var index: number = Number(event.target.name);
-    this.props.children.yearsOfBirth[index] = event.target.value;
+
+    console.debug(
+      "Updating year of birth for Child " +
+        event.target.name +
+        " from: " +
+        this.state.children.yearsOfBirth[index] +
+        " to : " +
+        event.target.value
+    );
+
+    this.state.children.yearsOfBirth[index] = Number(event.target.value);
+    this.setState({ children: this.state.children });
     this.props.onChange(event, this.props.children);
   }
 
   render() {
     return (
-      /*<Card>        
-        <Accordion.Toggle as={Card.Header} eventKey={this.props.eventKey}>
-          Children
-        </Accordion.Toggle>
-        <Accordion.Collapse eventKey={this.props.eventKey}>
-          <Card.Body>*/
-      //<Form>
       <React.Fragment>
-        {this.props.children.yearsOfBirth.map((year, index) => (
+        {this.state.children.yearsOfBirth.map((year, index) => (
           <Form.Group>
-            <div className="row">
-              <Form.Label className="col-md-8">
-                Child {index + 1} year of birth
-              </Form.Label>
-              <Form.Control
-                className="col-md-4 text-right"
-                type="number"
-                name={String(index)}
-                value={year}
-                onChange={this.onChange.bind(this)}
-              />
-            </div>
+            <Row>
+              <Col className="col-sm-8">
+                <Form.Label>Child {index + 1} year of birth</Form.Label>
+              </Col>
+              <Col className="col-sm-4">
+                <Form.Control
+                  type="number"
+                  className="text-right"
+                  name={String(index)}
+                  value={year}
+                  onChange={this.onChange.bind(this)}
+                />
+              </Col>
+            </Row>
           </Form.Group>
         ))}
       </React.Fragment>
-      //     </Form>
-      /*    </Card.Body>
-        </Accordion.Collapse>
-      </Card>*/
     );
   }
 }

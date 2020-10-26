@@ -1,21 +1,18 @@
 import React from "react";
 import { Component } from "react";
-
-import { HouseholdComponent } from "./HouseholdComponent";
-
 import { MonetaryValue } from "./MonetaryValue";
-import Card from "react-bootstrap/Card";
-import Form from "react-bootstrap/Form";
-import Accordion from "react-bootstrap/Accordion";
-import * as d3 from "d3-format";
 
-export default class Job extends HouseholdComponent {
+import Form from "react-bootstrap/Form";
+
+import * as d3 from "d3-format";
+import { Col, Row } from "react-bootstrap";
+
+export default class Job {
   private startYear: number = new Date().getFullYear();
-  endYear: number;
+  endYear: number = 2055;
   startingIncome: number = 50000;
 
   constructor(pStartYear?: number, pEndYear?: number) {
-    super();
     if (pEndYear) this.endYear = pEndYear;
     if (pStartYear) this.startYear = pStartYear;
   }
@@ -57,42 +54,44 @@ export class JobInputs extends Component<JobProps> {
   render() {
     return (
       <React.Fragment>
-        <div className="row">
+        <Row>
           <Form.Label>{"Job " + this.props.index}</Form.Label>
-        </div>
+        </Row>
         <Form.Group>
-          <div className="row">
-            <Form.Label className="col-md-8">
-              Annual income (after tax)
-            </Form.Label>
-            <Form.Control
-              className="col-md-4 text-right"
-              type="text"
-              name="startingIncome"
-              placeholder="50000"
-              value={d3.format(",")(this.props.job.startingIncome)}
-              onChange={this.onChange.bind(this)}
-            />
-          </div>
+          <Row>
+            <Col className="col-sm-8">
+              <Form.Label>Annual income (after tax)</Form.Label>
+            </Col>
+            <Col className="col-sm-4">
+              <Form.Control
+                className="text-right"
+                type="text"
+                name="startingIncome"
+                placeholder="50000"
+                value={d3.format(",")(this.props.job.startingIncome)}
+                onChange={this.onChange.bind(this)}
+              />
+            </Col>
+          </Row>
         </Form.Group>
 
         <Form.Group>
-          <div className="row">
-            <Form.Label className="col-md-8">Year of retirment</Form.Label>
-            <Form.Control
-              className="col-md-4 text-right"
-              name="endYear"
-              type="number"
-              value={this.props.job.endYear}
-              onChange={this.onChange.bind(this)}
-            />
-          </div>
+          <Row>
+            <Col className="col-sm-8">
+              <Form.Label>Year of retirment</Form.Label>
+            </Col>
+            <Col className="col-sm-4">
+              <Form.Control
+                className="text-right"
+                name="endYear"
+                type="number"
+                value={this.props.job.endYear}
+                onChange={this.onChange.bind(this)}
+              />
+            </Col>
+          </Row>
         </Form.Group>
       </React.Fragment>
-      /* </Form>
-          </Card.Body>
-        </Accordion.Collapse>
-      </Card>*/
     );
   }
 }
