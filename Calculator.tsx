@@ -1,21 +1,18 @@
 import { AssetCalculator } from "./AssetCalculator";
-import { FullHouseholdExpense } from "./FullHouseholdExpense";
+import { ExpenseCalculator } from "./ExpenseCalculator";
 import { Household } from "./Household";
 import { IncomeCalculator } from "./IncomeCalculator";
 import { MonetaryValue } from "./MonetaryValue";
 
 export class Calculator {
-  startYear = new Date().getFullYear();
-  endYear = new Date().getFullYear() + 80;
-
   household: Household;
-  expenses: FullHouseholdExpense;
+  expenses: ExpenseCalculator;
   incomes: IncomeCalculator;
   assets: AssetCalculator;
 
   constructor(household: Household) {
     this.household = household;
-    this.expenses = new FullHouseholdExpense(household);
+    this.expenses = new ExpenseCalculator(household);
     this.incomes = new IncomeCalculator(household);
     this.assets = new AssetCalculator(household);
   }
@@ -23,7 +20,11 @@ export class Calculator {
   update() {
     //Iterate over each year
     console.debug("Updating household");
-    for (var year = this.startYear; year < this.endYear + 1; year++) {
+    for (
+      var year = this.household.startYear;
+      year < this.household.endYear + 1;
+      year++
+    ) {
       console.debug("Year: " + year);
 
       //TODO: use Household default currency instead of hardcoded GBP

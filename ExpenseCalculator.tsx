@@ -7,14 +7,50 @@ import Accordion from "react-bootstrap/Accordion";
 import * as d3 from "d3-format";
 import { Household } from "./Household";
 
-export class FullHouseholdExpense {
+export class ExpenseCalculator {
   household: Household;
 
   constructor(household: Household) {
     this.household = household;
   }
 
+  /**
+   * Returns expense for a given tax year.
+   * Scale starting expense inline with adults joining and kids born and leaving the household.
+   * Currently using the OECD's latest squareroot model.
+   */
   expense(year: number): MonetaryValue {
+    var startingExpense = this.household.startingExpense;
+    var startingAdults = this.household.adults.filter(
+      adult => adult.yearOfJoining <= this.household.startYear
+    ).length;
+    var startingChildren = this.household.children.yearsOfBirth.filter(
+      yearOfBirth => yearOfBirth <= this.household.startYear
+    ).length;
+    var startingHouseholdEquivalent = Math.sqrt(
+      startingAdults + startingChildren
+    );
+
+    var inYearAdults = this.household.adults.filter(
+      adult => adult.yearOfJoining <= year
+    ).length;
+    //Assuming cost for Children for year 0 to 18, i.e. in 19 years
+    var inYearChildren = this.household.children.yearsOfBirth.filter(
+      (yearOfBirth: number) => {
+        console.debug("yearOfBirth +19: " + (yearOfBirth + 19));
+        console.debug("year < yearOfBirth + 19: " + (year < yearOfBirth + 19));
+        return yearOfBirth <= year && year < yearOfBirth + 19;
+      }
+    ).length;
+    console.debug("In year children: " + inYearChildren);
+
+    var inYearHouseholdEquivalent = Math.sqrt(inYearAdults + inYearChildren);
+
+    return new MonetaryValue(
+      (startingExpense * inYearHouseholdEquivalent) /
+        startingHouseholdEquivalent
+    );
+
     return new MonetaryValue(this.household.startingExpense);
   }
 

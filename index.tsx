@@ -10,10 +10,7 @@ import "./style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Household } from "./Household";
 import Job, { JobInputs } from "./Job";
-import {
-  FullHHExpenseInput,
-  FullHouseholdExpense
-} from "./FullHouseholdExpense";
+import { FullHHExpenseInput } from "./ExpenseCalculator";
 import { SavingsAccountInput } from "./SavingsAccount";
 import * as d3 from "d3-format";
 import Accordion from "react-bootstrap/Accordion";
@@ -71,6 +68,11 @@ class App extends Component<AppProps, AppState> {
   }
 
   renderIncomeComponents(household: Household): JSX.Element {
+    console.debug("Invoking renderIncomeComponents");
+    console.debug(
+      "# of adults in household: " + this.state.household.adults.length
+    );
+
     var ret = (
       <Card>
         <Accordion.Toggle as={Card.Header} eventKey="income">
@@ -79,7 +81,7 @@ class App extends Component<AppProps, AppState> {
         <Accordion.Collapse eventKey="income">
           <Card.Body>
             <Form>
-              {household.adults.map((adult, index) => (
+              {this.state.household.adults.map((adult, index) => (
                 <JobInputs
                   job={adult.job}
                   onChange={this.onChange}

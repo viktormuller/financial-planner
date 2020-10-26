@@ -9,7 +9,7 @@ import { Col, Row } from "react-bootstrap";
 
 export default class Job {
   private startYear: number = new Date().getFullYear();
-  endYear: number;
+  endYear: number = 2055;
   startingIncome: number = 50000;
 
   constructor(pStartYear?: number, pEndYear?: number) {

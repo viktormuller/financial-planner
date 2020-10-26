@@ -124,21 +124,39 @@ class ChildrenProps {
   onChange;
 }
 
-export class ChildrenInput extends Component<ChildrenProps> {
+class ChildrenState {
+  children: Children;
+}
+
+export class ChildrenInput extends Component<ChildrenProps, ChildrenState> {
   constructor(props) {
     super(props);
+    this.state = {
+      children: this.props.children
+    };
   }
 
   onChange(event) {
     var index: number = Number(event.target.name);
-    this.props.children.yearsOfBirth[index] = event.target.value;
+
+    console.debug(
+      "Updating year of birth for Child " +
+        event.target.name +
+        " from: " +
+        this.state.children.yearsOfBirth[index] +
+        " to : " +
+        event.target.value
+    );
+
+    this.state.children.yearsOfBirth[index] = Number(event.target.value);
+    this.setState({ children: this.state.children });
     this.props.onChange(event, this.props.children);
   }
 
   render() {
     return (
       <React.Fragment>
-        {this.props.children.yearsOfBirth.map((year, index) => (
+        {this.state.children.yearsOfBirth.map((year, index) => (
           <Form.Group>
             <Row>
               <Col className="col-sm-8">
@@ -146,8 +164,8 @@ export class ChildrenInput extends Component<ChildrenProps> {
               </Col>
               <Col className="col-sm-4">
                 <Form.Control
-                  className="text-right"
                   type="number"
+                  className="text-right"
                   name={String(index)}
                   value={year}
                   onChange={this.onChange.bind(this)}

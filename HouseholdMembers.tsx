@@ -38,6 +38,10 @@ export class HouseholdMembers extends Component<
   }
 
   onCurrentAdultsChanged(event) {
+    console.debug(
+      "Updating number of Adults from: " + this.state.household.adults.length
+    );
+    console.debug("New target number of current adults: " + event.target.value);
     var adultsToAdd = Math.max(
       0,
       event.target.value - this.state.currentAdults.length
@@ -50,7 +54,9 @@ export class HouseholdMembers extends Component<
     var newAdultsArray = new Array(...this.state.currentAdults);
 
     for (let i: number = 0; i < adultsToAdd; i++) {
-      newAdultsArray.push(new Adult());
+      var newAdult = new Adult();
+      newAdultsArray.push(newAdult);
+      this.state.household.adults.push(newAdult);
     }
 
     for (let i: number = 0; i < adultsToRemove; i++) {
@@ -60,7 +66,7 @@ export class HouseholdMembers extends Component<
         1
       );
     }
-
+    console.debug("Updating adults to: " + this.state.household.adults.length);
     this.setState({
       household: this.state.household,
       currentAdults: newAdultsArray
@@ -81,7 +87,10 @@ export class HouseholdMembers extends Component<
 
     for (let i: number = 0; i < adultsToAdd; i++) {
       //Add a new member in 2 years by default
-      newAdultsArray.push(new Adult(new Date().getFullYear() + 2));
+
+      var newAdult = new Adult(new Date().getFullYear() + 2);
+      newAdultsArray.push(newAdult);
+      this.state.household.adults.push(newAdult);
     }
 
     for (let i: number = 0; i < adultsToRemove; i++) {
@@ -155,7 +164,6 @@ export class HouseholdMembers extends Component<
                     >
                       <option>0</option>
                       <option>1</option>
-                      <option>2</option>
                     </Form.Control>
                   </Col>
                 </Row>
