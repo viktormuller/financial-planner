@@ -9,6 +9,7 @@ import { Household } from "./Household";
 
 export class ExpenseCalculator {
   household: Household;
+  expenseSeries: Map<number, MonetaryValue> = new Map<number, MonetaryValue>();
 
   constructor(household: Household) {
     this.household = household;
@@ -46,12 +47,12 @@ export class ExpenseCalculator {
 
     var inYearHouseholdEquivalent = Math.sqrt(inYearAdults + inYearChildren);
 
-    return new MonetaryValue(
+    var inYearExpense = new MonetaryValue(
       (startingExpense * inYearHouseholdEquivalent) /
         startingHouseholdEquivalent
     );
-
-    return new MonetaryValue(this.household.startingExpense);
+    this.expenseSeries.set(year, inYearExpense);
+    return inYearExpense;
   }
 
   setStartingExpense(startingExpense: number) {
