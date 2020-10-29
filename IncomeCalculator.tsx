@@ -1,15 +1,15 @@
-import { Adult } from "./Adult";
 import { Household } from "./Household";
 import { MonetaryValue } from "./MonetaryValue";
 
 export class IncomeCalculator {
   household: Household;
+  incomeSeries: Map<number, MonetaryValue> = new Map<number, MonetaryValue>();
 
   constructor(household: Household) {
     this.household = household;
   }
 
-  income(year: number) {
+  income(year: number): MonetaryValue {
     var ret: MonetaryValue = new MonetaryValue(0);
 
     for (let adult of this.household.adults) {
@@ -18,6 +18,8 @@ export class IncomeCalculator {
     }
 
     ret = ret.add(this.household.afterTaxAccount.income(year));
+
+    this.incomeSeries.set(year, ret);
 
     return ret;
   }

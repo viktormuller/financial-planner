@@ -4,7 +4,8 @@ import {
   XAxis,
   YAxis,
   VerticalBarSeries,
-  FlexibleWidthXYPlot
+  FlexibleWidthXYPlot,
+  DiscreteColorLegend
 } from "react-vis";
 import "./style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -21,6 +22,7 @@ import { HouseholdMembers } from "./HouseholdMembers";
 import { Calculator } from "./Calculator";
 import { Adult } from "./Adult";
 import { MonetaryValue } from "./MonetaryValue";
+import { Col, Container, Row } from "react-bootstrap";
 
 interface AppProps {
   household: Household;
@@ -96,20 +98,74 @@ class App extends Component<AppProps, AppState> {
     return ret;
   }
 
-  render() {
+  static convertToXY(inputData: Map<number, MonetaryValue>): any[] {
     const myData: any[] = new Array<any>();
-    const netWorthSeriesEntries = this.state.netWorthSeries.entries();
-    for (let [year, amount] of netWorthSeriesEntries) {
+    const entries = inputData.entries();
+    for (let [year, amount] of entries) {
       myData.push({
         x: year,
         y: amount.value
       });
     }
+    return myData;
+  }
+
+  renderNetWorth() {
+    const myData: any[] = App.convertToXY(this.state.netWorthSeries);
 
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col-md-4">
+      <FlexibleWidthXYPlot margin={{ left: 75, right: 75 }} height={240}>
+        <VerticalBarSeries
+          className="vertical-bar-series"
+          data={myData}
+          barWidth={0.8}
+        />
+        <XAxis title="Tax years" />
+        <YAxis
+          tickFormat={tick => d3.format(".2s")(tick)}
+          title="Net worth (GBP)"
+        />
+      </FlexibleWidthXYPlot>
+    );
+  }
+
+  renderNetIncome() {
+    var incomeSeries: any[] = App.convertToXY(
+      this.calculator.incomes.incomeSeries
+    );
+    var expenseSeries: any[] = App.convertToXY(
+      this.calculator.expenses.expenseSeries
+    );
+    return (
+      <FlexibleWidthXYPlot margin={{ left: 75, right: 75 }} height={240}>
+        <DiscreteColorLegend
+          items={["Income", "Expense"]}
+          orientation="vertical"
+        />
+        <VerticalBarSeries
+          className="vertical-bar-series"
+          data={incomeSeries}
+          barWidth={0.8}
+        />
+        <VerticalBarSeries
+          className="vertical-bar-series"
+          data={expenseSeries}
+          barWidth={0.8}
+        />
+        <XAxis title="Tax years" />
+        <YAxis
+          tickFormat={tick => d3.format(".2s")(tick)}
+          title="Income / expense (GBP)"
+        />
+      </FlexibleWidthXYPlot>
+    );
+  }
+
+  render() {
+    return (
+      <Container>
+        <Row>
+          <Col className="col-md-4">
             <Accordion defaultActiveKey="members">
               <HouseholdMembers
                 household={this.state.household}
@@ -127,23 +183,15 @@ class App extends Component<AppProps, AppState> {
                 eventKey="savings"
               />
             </Accordion>
-          </div>
-          <div className="col-md-8">
-            <FlexibleWidthXYPlot margin={{ left: 75, right: 75 }} height={480}>
-              <VerticalBarSeries
-                className="vertical-bar-series"
-                data={myData}
-                barWidth={0.8}
-              />
-              <XAxis title="Tax years" />
-              <YAxis
-                tickFormat={tick => d3.format(".2s")(tick)}
-                title="Net worth (GBP)"
-              />
-            </FlexibleWidthXYPlot>
-          </div>
-        </div>
-      </div>
+          </Col>
+          <Col className="col-md-8">
+            <Container>
+              <Row>{this.renderNetWorth()}</Row>
+              <Row>{this.renderNetIncome()}</Row>
+            </Container>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
