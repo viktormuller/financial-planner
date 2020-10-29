@@ -1,5 +1,14 @@
 import React, { Component } from "react";
-import { Accordion, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
+import {
+  Accordion,
+  Card,
+  Col,
+  Form,
+  FormGroup,
+  Row,
+  ToggleButton,
+  ToggleButtonGroup
+} from "react-bootstrap";
 import { Adult } from "./Adult";
 import { Children, ChildrenInput } from "./Children";
 import { Household } from "./Household";
@@ -37,21 +46,34 @@ export class HouseholdMembers extends Component<
     };
   }
 
-  onCurrentAdultsChanged(event) {
+  //TODO: refactor this into the expense calculator
+  scaleStartingExpense(oldMembers: number, newMembers: number) {
+    this.state.household.startingExpense =
+      Math.round(
+        (this.state.household.startingExpense * Math.sqrt(newMembers)) /
+          Math.sqrt(oldMembers) /
+          1000
+      ) * 1000;
+  }
+
+  onCurrentAdultsChanged(value) {
     console.debug(
       "Updating number of Adults from: " + this.state.household.adults.length
     );
-    console.debug("New target number of current adults: " + event.target.value);
-    var adultsToAdd = Math.max(
-      0,
-      event.target.value - this.state.currentAdults.length
-    );
-    var adultsToRemove = Math.max(
-      0,
-      this.state.currentAdults.length - event.target.value
-    );
+    console.debug("New target number of current adults: " + value);
+    var adultsToAdd = Math.max(0, value - this.state.currentAdults.length);
+    var adultsToRemove = Math.max(0, this.state.currentAdults.length - value);
 
     var newAdultsArray = new Array(...this.state.currentAdults);
+
+    var currentMembers =
+      this.state.household.adults.length +
+      this.state.household.children.yearsOfBirth.length;
+
+    this.scaleStartingExpense(
+      currentMembers,
+      currentMembers + adultsToAdd - adultsToRemove
+    );
 
     for (let i: number = 0; i < adultsToAdd; i++) {
       var newAdult = new Adult();
@@ -67,6 +89,7 @@ export class HouseholdMembers extends Component<
       );
     }
     console.debug("Updating adults to: " + this.state.household.adults.length);
+
     this.setState({
       household: this.state.household,
       currentAdults: newAdultsArray
@@ -127,46 +150,53 @@ export class HouseholdMembers extends Component<
         <Accordion.Collapse eventKey="members">
           <Card.Body>
             <Form>
-              <FormGroup>
-                <Row>
-                  <Col className="col-sm-8">
-                    <Form.Label>Adults in the household today </Form.Label>
-                  </Col>
-                  <Col className="col-sm-4">
-                    <Form.Control
-                      as="select"
-                      className="text-right"
-                      type="number"
-                      value={this.state.currentAdults.length}
-                      onChange={this.onCurrentAdultsChanged.bind(this)}
+              <FormGroup as={Row}>
+                <Col className="col-sm-6">
+                  <Form.Label>You are currently: </Form.Label>
+                </Col>
+                <Col className="col-sm-6">
+                  <ToggleButtonGroup
+                    name="current_adults"
+                    type="radio"
+                    value={this.state.currentAdults.length}
+                    onChange={this.onCurrentAdultsChanged.bind(this)}
+                  >
+                    <ToggleButton
+                      variant="outline-secondary"
+                      size="sm"
+                      value={1}
                     >
-                      <option>1</option>
-                      <option>2</option>
-                    </Form.Control>
-                  </Col>
-                </Row>
+                      Single
+                    </ToggleButton>
+                    <ToggleButton
+                      variant="outline-secondary"
+                      size="sm"
+                      value={2}
+                    >
+                      Couple
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Col>
               </FormGroup>
               <hr />
-              <FormGroup>
-                <Row>
-                  <Col className="col-sm-8">
-                    <Form.Label>
-                      Any other adults expected to join in the future?
-                    </Form.Label>
-                  </Col>
-                  <Col className="col-sm-4">
-                    <Form.Control
-                      className="text-right"
-                      as="select"
-                      type="number"
-                      value={this.state.futureAdults.length}
-                      onChange={this.onFutureAdultsChanged.bind(this)}
-                    >
-                      <option>0</option>
-                      <option>1</option>
-                    </Form.Control>
-                  </Col>
-                </Row>
+              <FormGroup as={Row}>
+                <Col className="col-sm-8">
+                  <Form.Label>
+                    Any other adults expected to join in the future?
+                  </Form.Label>
+                </Col>
+                <Col className="col-sm-4">
+                  <Form.Control
+                    className="text-right"
+                    as="select"
+                    type="number"
+                    value={this.state.futureAdults.length}
+                    onChange={this.onFutureAdultsChanged.bind(this)}
+                  >
+                    <option>0</option>
+                    <option>1</option>
+                  </Form.Control>
+                </Col>
               </FormGroup>
               {this.state.futureAdults.map((adult, index) => (
                 <FormGroup>

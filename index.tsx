@@ -45,7 +45,7 @@ class App extends Component<AppProps, AppState> {
     headOfHH.job = job;
     var adults = [headOfHH];
 
-    var children = new Children([2022, 2024]);
+    var children = new Children([]);
 
     household.children = children;
     household.adults = adults;
