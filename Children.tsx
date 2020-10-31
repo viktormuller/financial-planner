@@ -2,7 +2,7 @@ import React from "react";
 import { Component } from "react";
 import { MonetaryValue } from "./MonetaryValue";
 import Form from "react-bootstrap/Form";
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 
 export class Children {
   yearsOfBirth: number[];
@@ -153,6 +153,14 @@ export class ChildrenInput extends Component<ChildrenProps, ChildrenState> {
     this.props.onChange(event, this.props.children);
   }
 
+  addChild(event) {
+    this.state.children.yearsOfBirth.push(
+      Math.max(...this.state.children.yearsOfBirth) + 2
+    );
+    this.setState({ children: this.state.children });
+    this.props.onChange(event, this.props.children);
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -174,6 +182,9 @@ export class ChildrenInput extends Component<ChildrenProps, ChildrenState> {
             </Row>
           </Form.Group>
         ))}
+        <Button block variant="secondary" onClick={this.addChild.bind(this)}>
+          Add a child
+        </Button>
       </React.Fragment>
     );
   }

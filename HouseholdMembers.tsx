@@ -67,7 +67,7 @@ export class HouseholdMembers extends Component<
     var newAdultsArray = new Array(...this.state.currentAdults);
 
     var currentMembers =
-      this.state.household.adults.length +
+      this.state.currentAdults.length +
       this.state.household.children.yearsOfBirth.length;
 
     this.scaleStartingExpense(
@@ -88,23 +88,30 @@ export class HouseholdMembers extends Component<
         1
       );
     }
+
+    var newState = {
+      currentAdults: newAdultsArray,
+      futureAdults: this.state.futureAdults,
+      household: this.state.household
+    };
+
+    if (newState.currentAdults.length > 1) {
+      if (this.state.futureAdults.length > 0) {
+        this.state.household.adults.splice(
+          this.state.household.adults.indexOf(this.state.futureAdults[0]),
+          1
+        );
+      }
+      newState.futureAdults = [];
+    }
     console.debug("Updating adults to: " + this.state.household.adults.length);
 
-    this.setState({
-      household: this.state.household,
-      currentAdults: newAdultsArray
-    });
+    this.setState(newState);
     this.props.onChange(event);
   }
-  onFutureAdultsChanged(event) {
-    var adultsToAdd = Math.max(
-      0,
-      event.target.value - this.state.futureAdults.length
-    );
-    var adultsToRemove = Math.max(
-      0,
-      this.state.futureAdults.length - event.target.value
-    );
+  onFutureAdultsChanged(value) {
+    var adultsToAdd = Math.max(0, value - this.state.futureAdults.length);
+    var adultsToRemove = Math.max(0, this.state.futureAdults.length - value);
 
     var newAdultsArray = new Array(...this.state.futureAdults);
 
@@ -151,10 +158,12 @@ export class HouseholdMembers extends Component<
           <Card.Body>
             <Form>
               <FormGroup as={Row}>
-                <Col className="col-sm-6">
-                  <Form.Label>You are currently: </Form.Label>
+                <Col className="col-sm-8">
+                  <Form.Label>
+                    How many adults in your household today?{" "}
+                  </Form.Label>
                 </Col>
-                <Col className="col-sm-6">
+                <Col className="col-sm-4">
                   <ToggleButtonGroup
                     name="current_adults"
                     type="radio"
@@ -166,38 +175,55 @@ export class HouseholdMembers extends Component<
                       size="sm"
                       value={1}
                     >
-                      Single
+                      One
                     </ToggleButton>
                     <ToggleButton
                       variant="outline-secondary"
                       size="sm"
                       value={2}
                     >
-                      Couple
+                      Two
                     </ToggleButton>
                   </ToggleButtonGroup>
                 </Col>
               </FormGroup>
-              <hr />
-              <FormGroup as={Row}>
-                <Col className="col-sm-8">
-                  <Form.Label>
-                    Any other adults expected to join in the future?
-                  </Form.Label>
-                </Col>
-                <Col className="col-sm-4">
-                  <Form.Control
-                    className="text-right"
-                    as="select"
-                    type="number"
-                    value={this.state.futureAdults.length}
-                    onChange={this.onFutureAdultsChanged.bind(this)}
-                  >
-                    <option>0</option>
-                    <option>1</option>
-                  </Form.Control>
-                </Col>
-              </FormGroup>
+              {this.state.currentAdults.length < 2 ? (
+                <React.Fragment>
+                  <hr />
+                  <FormGroup as={Row}>
+                    <Col className="col-sm-8">
+                      <Form.Label>
+                        Do you expect to have a partner in the future?
+                      </Form.Label>
+                    </Col>
+                    <Col className="col-sm-4">
+                      <ToggleButtonGroup
+                        name="future_adults"
+                        type="radio"
+                        value={this.state.futureAdults.length}
+                        onChange={this.onFutureAdultsChanged.bind(this)}
+                      >
+                        <ToggleButton
+                          variant="outline-secondary"
+                          size="sm"
+                          value={1}
+                        >
+                          Yes
+                        </ToggleButton>
+                        <ToggleButton
+                          variant="outline-secondary"
+                          size="sm"
+                          value={0}
+                        >
+                          No
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                    </Col>
+                  </FormGroup>
+                </React.Fragment>
+              ) : (
+                ""
+              )}
               {this.state.futureAdults.map((adult, index) => (
                 <FormGroup>
                   <Row>
