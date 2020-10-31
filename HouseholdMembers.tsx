@@ -68,7 +68,9 @@ export class HouseholdMembers extends Component<
 
     var currentMembers =
       this.state.currentAdults.length +
-      this.state.household.children.yearsOfBirth.length;
+      this.state.household.children.yearsOfBirth.filter(
+        year => year <= this.state.household.startYear
+      ).length;
 
     this.scaleStartingExpense(
       currentMembers,
