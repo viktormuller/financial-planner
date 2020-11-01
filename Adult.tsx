@@ -6,6 +6,5 @@ export class Adult {
 
   constructor(yearOfJoining?: number) {
     this.yearOfJoining = yearOfJoining ? yearOfJoining : -1;
-    this.job = new Job();
   }
 }

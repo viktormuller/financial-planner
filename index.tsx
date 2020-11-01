@@ -5,7 +5,8 @@ import {
   YAxis,
   VerticalBarSeries,
   FlexibleWidthXYPlot,
-  DiscreteColorLegend
+  DiscreteColorLegend,
+  Hint
 } from "react-vis";
 import "./style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -30,6 +31,16 @@ interface AppProps {
 interface AppState {
   household: Household;
   netWorthSeries: Map<number, MonetaryValue>;
+  netWorthHint: Object;
+}
+
+function hintFormatter(data) {
+  return [
+    {
+      title: "Net worth in " + data.x,
+      value: "GBP " + d3.format(".2s")(data.y)
+    }
+  ];
 }
 
 class App extends Component<AppProps, AppState> {
@@ -45,7 +56,7 @@ class App extends Component<AppProps, AppState> {
     headOfHH.job = job;
     var adults = [headOfHH];
 
-    var children = new Children([2022, 2024]);
+    var children = new Children([]);
 
     household.children = children;
     household.adults = adults;
@@ -55,7 +66,8 @@ class App extends Component<AppProps, AppState> {
     this.onChange = this.onChange.bind(this);
     this.state = {
       household: household,
-      netWorthSeries: this.calculator.update()
+      netWorthSeries: this.calculator.update(),
+      netWorthHint: {}
     };
     this.recalcTimeout = 0;
   }
@@ -110,6 +122,10 @@ class App extends Component<AppProps, AppState> {
     return myData;
   }
 
+  onValueMouseOver(value, event) {
+    this.setState({ netWorthHint: value });
+  }
+
   renderNetWorth() {
     const myData: any[] = App.convertToXY(this.state.netWorthSeries);
 
@@ -119,12 +135,18 @@ class App extends Component<AppProps, AppState> {
           className="vertical-bar-series"
           data={myData}
           barWidth={0.8}
+          onValueMouseOver={this.onValueMouseOver.bind(this)}
         />
-        <XAxis title="Tax years" />
+        <XAxis title="Tax years" tickFormat={tick => d3.format(".0f")(tick)} />
         <YAxis
           tickFormat={tick => d3.format(".2s")(tick)}
           title="Net worth (GBP)"
         />
+        {this.state.netWorthHint ? (
+          <Hint value={this.state.netWorthHint} format={hintFormatter} />
+        ) : (
+          ""
+        )}
       </FlexibleWidthXYPlot>
     );
   }
@@ -152,7 +174,7 @@ class App extends Component<AppProps, AppState> {
           data={expenseSeries}
           barWidth={0.8}
         />
-        <XAxis title="Tax years" />
+        <XAxis title="Tax years" tickFormat={tick => d3.format(".0f")(tick)} />
         <YAxis
           tickFormat={tick => d3.format(".2s")(tick)}
           title="Income / expense (GBP)"

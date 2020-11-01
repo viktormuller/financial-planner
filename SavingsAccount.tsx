@@ -77,7 +77,7 @@ export class SavingsAccountInput extends Component<SavingsAccountProps> {
     return (
       <Card>
         <Accordion.Toggle as={Card.Header} eventKey={this.props.eventKey}>
-          After tax savings
+          Savings
         </Accordion.Toggle>
         <Accordion.Collapse eventKey={this.props.eventKey}>
           <Card.Body>

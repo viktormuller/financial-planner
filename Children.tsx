@@ -2,7 +2,8 @@ import React from "react";
 import { Component } from "react";
 import { MonetaryValue } from "./MonetaryValue";
 import Form from "react-bootstrap/Form";
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
+import { BsTrash } from "react-icons/bs";
 
 export class Children {
   yearsOfBirth: number[];
@@ -153,6 +154,22 @@ export class ChildrenInput extends Component<ChildrenProps, ChildrenState> {
     this.props.onChange(event, this.props.children);
   }
 
+  addChild(event) {
+    this.state.children.yearsOfBirth.push(
+      this.state.children.yearsOfBirth.length > 0
+        ? Math.max(...this.state.children.yearsOfBirth) + 2
+        : new Date().getFullYear() + 2
+    );
+    this.setState({ children: this.state.children });
+    this.props.onChange(event, this.props.children);
+  }
+
+  removeChild(event) {
+    this.state.children.yearsOfBirth.splice(event.target.value, 1);
+    this.setState({ children: this.state.children });
+    this.props.onChange(event, this.props.children);
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -160,8 +177,18 @@ export class ChildrenInput extends Component<ChildrenProps, ChildrenState> {
           <Form.Group>
             <Row>
               <Col className="col-sm-8">
-                <Form.Label>Child {index + 1} year of birth</Form.Label>
+                <Form.Label>
+                  Child {index + 1} year of birth{" "}
+                  <Button
+                    variant="light"
+                    onClick={this.removeChild.bind(this)}
+                    value={index}
+                  >
+                    <BsTrash />
+                  </Button>
+                </Form.Label>
               </Col>
+
               <Col className="col-sm-4">
                 <Form.Control
                   type="number"
@@ -174,6 +201,9 @@ export class ChildrenInput extends Component<ChildrenProps, ChildrenState> {
             </Row>
           </Form.Group>
         ))}
+        <Button block variant="secondary" onClick={this.addChild.bind(this)}>
+          Add a child
+        </Button>
       </React.Fragment>
     );
   }
