@@ -58,7 +58,7 @@ export class SavingsAccount extends Asset {
 class SavingsAccountProps {
   account: SavingsAccount;
   onChange;
-  eventKey: string;
+  //eventKey: string;
 }
 
 export class SavingsAccountInput extends Component<SavingsAccountProps> {
@@ -75,33 +75,31 @@ export class SavingsAccountInput extends Component<SavingsAccountProps> {
 
   render() {
     return (
-      <Card>
+      /* <Card>
         <Accordion.Toggle as={Card.Header} eventKey={this.props.eventKey}>
           Savings
         </Accordion.Toggle>
         <Accordion.Collapse eventKey={this.props.eventKey}>
           <Card.Body>
-            <Form>
-              <Form.Group>
-                <div className="row">
-                  <Form.Label className="col-md-8">
-                    Balance at the end of {this.props.account.yearOfOpening}
-                  </Form.Label>
-                  <Form.Control
-                    className="col-md-4 text-right"
-                    type="text"
-                    placeholder="50000"
-                    value={d3.format(",")(
-                      this.props.account.getOpeningBalance().value
-                    )}
-                    onChange={this.onChange.bind(this)}
-                  />
-                </div>
-              </Form.Group>
-            </Form>
+            <Form>*/
+      <Form.Group>
+        <div className="row">
+          <Form.Label className="col-md-8">
+            Balance at the end of {this.props.account.yearOfOpening}
+          </Form.Label>
+          <Form.Control
+            className="col-md-4 text-right"
+            type="text"
+            placeholder="50000"
+            value={d3.format(",")(this.props.account.getOpeningBalance().value)}
+            onChange={this.onChange.bind(this)}
+          />
+        </div>
+      </Form.Group>
+      /*   </Form>
           </Card.Body>
         </Accordion.Collapse>
-      </Card>
+      </Card>*/
     );
   }
 }

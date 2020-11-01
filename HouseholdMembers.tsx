@@ -154,7 +154,7 @@ export class HouseholdMembers extends Component<
     return (
       <Card>
         <Accordion.Toggle as={Card.Header} eventKey="members">
-          Household Members
+          Members of your household
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="members">
           <Card.Body>
