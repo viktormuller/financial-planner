@@ -128,10 +128,8 @@ class App extends Component<AppProps, AppState> {
     this.setState({ netWorthHint: value, netWorthHintEnabled: true });
   }
 
-  onValueMouseOut(value, event) {
-    if (this.state.netWorthHint && this.state.netWorthHint.x == value.x) {
-      this.setState({ netWorthHintEnabled: false });
-    }
+  onSeriesMouseOut(info) {
+    this.setState({ netWorthHintEnabled: false });
   }
 
   renderNetWorth() {
@@ -144,7 +142,7 @@ class App extends Component<AppProps, AppState> {
           data={myData}
           barWidth={0.8}
           onValueMouseOver={this.onValueMouseOver.bind(this)}
-          onValueMouseOut={this.onValueMouseOut.bind(this)}
+          onSeriesMouseOut={this.onSeriesMouseOut.bind(this)}
         />
         <XAxis title="Tax years" tickFormat={tick => d3.format(".0f")(tick)} />
         <YAxis

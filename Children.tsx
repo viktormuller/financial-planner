@@ -108,7 +108,7 @@ export class Children {
       console.debug("Child number " + i);
       var age: number = year - sortedYoB[i];
       console.debug("Child number " + i + " age: " + age);
-      if (0 < age && age < 18) {
+      if (0 < age && age < 22) {
         var childIndex = Math.min(i, Children.costOfChild.length - 1);
         console.debug("Child number " + i + " index: " + childIndex);
         var childCost = Children.costOfChild[childIndex][age];
