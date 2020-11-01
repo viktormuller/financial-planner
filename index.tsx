@@ -23,7 +23,7 @@ import { HouseholdMembers } from "./HouseholdMembers";
 import { Calculator } from "./Calculator";
 import { Adult } from "./Adult";
 import { MonetaryValue } from "./MonetaryValue";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Navbar, Row } from "react-bootstrap";
 
 interface AppProps {
   household: Household;
@@ -32,6 +32,7 @@ interface AppState {
   household: Household;
   netWorthSeries: Map<number, MonetaryValue>;
   netWorthHint: Object;
+  netWorthHintEnabled: boolean;
 }
 
 function hintFormatter(data) {
@@ -67,7 +68,8 @@ class App extends Component<AppProps, AppState> {
     this.state = {
       household: household,
       netWorthSeries: this.calculator.update(),
-      netWorthHint: {}
+      netWorthHint: {},
+      netWorthHintEnabled: false
     };
     this.recalcTimeout = 0;
   }
@@ -81,7 +83,7 @@ class App extends Component<AppProps, AppState> {
     }, 500);
   }
 
-  renderIncomeComponents(household: Household): JSX.Element {
+  renderIncomeComponents(): JSX.Element {
     console.debug("Invoking renderIncomeComponents");
     console.debug(
       "# of adults in household: " + this.state.household.adults.length
@@ -123,29 +125,34 @@ class App extends Component<AppProps, AppState> {
   }
 
   onValueMouseOver(value, event) {
-    this.setState({ netWorthHint: value });
+    this.setState({ netWorthHint: value, netWorthHintEnabled: true });
+  }
+
+  onValueMouseOut(value, event) {
+    if (this.state.netWorthHint && this.state.netWorthHint.x == value.x) {
+      this.setState({ netWorthHintEnabled: false });
+    }
   }
 
   renderNetWorth() {
     const myData: any[] = App.convertToXY(this.state.netWorthSeries);
 
     return (
-      <FlexibleWidthXYPlot margin={{ left: 75, right: 75 }} height={240}>
+      <FlexibleWidthXYPlot margin={{ left: 75, right: 75 }} height={220}>
         <VerticalBarSeries
           className="vertical-bar-series"
           data={myData}
           barWidth={0.8}
           onValueMouseOver={this.onValueMouseOver.bind(this)}
+          onValueMouseOut={this.onValueMouseOut.bind(this)}
         />
         <XAxis title="Tax years" tickFormat={tick => d3.format(".0f")(tick)} />
         <YAxis
           tickFormat={tick => d3.format(".2s")(tick)}
           title="Net worth (GBP)"
         />
-        {this.state.netWorthHint ? (
+        {this.state.netWorthHintEnabled && (
           <Hint value={this.state.netWorthHint} format={hintFormatter} />
-        ) : (
-          ""
         )}
       </FlexibleWidthXYPlot>
     );
@@ -159,7 +166,7 @@ class App extends Component<AppProps, AppState> {
       this.calculator.expenses.expenseSeries
     );
     return (
-      <FlexibleWidthXYPlot margin={{ left: 75, right: 75 }} height={240}>
+      <FlexibleWidthXYPlot margin={{ left: 75, right: 75 }} height={220}>
         <DiscreteColorLegend
           items={["Income", "Expense"]}
           orientation="vertical"
@@ -185,35 +192,40 @@ class App extends Component<AppProps, AppState> {
 
   render() {
     return (
-      <Container>
-        <Row>
-          <Col className="col-md-4">
-            <Accordion defaultActiveKey="members">
-              <HouseholdMembers
-                household={this.state.household}
-                onChange={this.onChange}
-              />
-              <FullHHExpenseInput
-                household={this.state.household}
-                onChange={this.onChange}
-                eventKey="hh_expense"
-              />
-              {this.renderIncomeComponents(this.state.household)}
-              <SavingsAccountInput
-                account={this.state.household.afterTaxAccount}
-                onChange={this.onChange}
-                eventKey="savings"
-              />
-            </Accordion>
-          </Col>
-          <Col className="col-md-8">
-            <Container>
-              <Row>{this.renderNetWorth()}</Row>
-              <Row>{this.renderNetIncome()}</Row>
-            </Container>
-          </Col>
-        </Row>
-      </Container>
+      <React.Fragment>
+        <Navbar bg="dark" variant="dark">
+          <Navbar.Brand>How much is enough?</Navbar.Brand>
+        </Navbar>
+        <Container className="mt-2">
+          <Row>
+            <Col className="col-md-4">
+              <Accordion defaultActiveKey="members">
+                <HouseholdMembers
+                  household={this.state.household}
+                  onChange={this.onChange}
+                />
+                <FullHHExpenseInput
+                  household={this.state.household}
+                  onChange={this.onChange}
+                  eventKey="hh_expense"
+                />
+                {this.renderIncomeComponents()}
+                <SavingsAccountInput
+                  account={this.state.household.afterTaxAccount}
+                  onChange={this.onChange}
+                  eventKey="savings"
+                />
+              </Accordion>
+            </Col>
+            <Col className="col-md-8">
+              <Container>
+                <Row>{this.renderNetWorth()}</Row>
+                <Row>{this.renderNetIncome()}</Row>
+              </Container>
+            </Col>
+          </Row>
+        </Container>
+      </React.Fragment>
     );
   }
 }
