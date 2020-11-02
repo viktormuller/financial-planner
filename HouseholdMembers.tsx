@@ -54,6 +54,13 @@ export class HouseholdMembers extends Component<
           Math.sqrt(oldMembers) /
           1000
       ) * 1000;
+
+    this.state.household.startingRent =
+      Math.round(
+        (this.state.household.startingRent * Math.sqrt(newMembers)) /
+          Math.sqrt(oldMembers) /
+          1000
+      ) * 1000;
   }
 
   onCurrentAdultsChanged(value) {
@@ -154,7 +161,7 @@ export class HouseholdMembers extends Component<
     return (
       <Card>
         <Accordion.Toggle as={Card.Header} eventKey="members">
-          Household Members
+          Members of your household
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="members">
           <Card.Body>

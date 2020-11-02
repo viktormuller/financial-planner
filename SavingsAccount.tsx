@@ -5,6 +5,7 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
 import * as d3 from "d3-format";
+import { Col, Row } from "react-bootstrap";
 
 export class SavingsAccount extends Asset {
   interest: number = 0.02;
@@ -58,7 +59,7 @@ export class SavingsAccount extends Asset {
 class SavingsAccountProps {
   account: SavingsAccount;
   onChange;
-  eventKey: string;
+  //eventKey: string;
 }
 
 export class SavingsAccountInput extends Component<SavingsAccountProps> {
@@ -75,33 +76,24 @@ export class SavingsAccountInput extends Component<SavingsAccountProps> {
 
   render() {
     return (
-      <Card>
-        <Accordion.Toggle as={Card.Header} eventKey={this.props.eventKey}>
-          Savings
-        </Accordion.Toggle>
-        <Accordion.Collapse eventKey={this.props.eventKey}>
-          <Card.Body>
-            <Form>
-              <Form.Group>
-                <div className="row">
-                  <Form.Label className="col-md-8">
-                    Balance at the end of {this.props.account.yearOfOpening}
-                  </Form.Label>
-                  <Form.Control
-                    className="col-md-4 text-right"
-                    type="text"
-                    placeholder="50000"
-                    value={d3.format(",")(
-                      this.props.account.getOpeningBalance().value
-                    )}
-                    onChange={this.onChange.bind(this)}
-                  />
-                </div>
-              </Form.Group>
-            </Form>
-          </Card.Body>
-        </Accordion.Collapse>
-      </Card>
+      <Form.Group>
+        <Row>
+          <Col sm={7}>
+            <Form.Label>Balance at the end of last year</Form.Label>
+          </Col>
+          <Col sm={5}>
+            <Form.Control
+              className="text-right"
+              type="text"
+              placeholder="50000"
+              value={d3.format(",")(
+                this.props.account.getOpeningBalance().value
+              )}
+              onChange={this.onChange.bind(this)}
+            />
+          </Col>
+        </Row>
+      </Form.Group>
     );
   }
 }

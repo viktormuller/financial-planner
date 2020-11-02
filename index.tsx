@@ -24,6 +24,7 @@ import { Calculator } from "./Calculator";
 import { Adult } from "./Adult";
 import { MonetaryValue } from "./MonetaryValue";
 import { Col, Container, Navbar, Row } from "react-bootstrap";
+import { PropertyInput } from "./Property";
 
 interface AppProps {
   household: Household;
@@ -188,6 +189,31 @@ class App extends Component<AppProps, AppState> {
     );
   }
 
+  renderAssets() {
+    return (
+      <Card>
+        <Accordion.Toggle as={Card.Header} eventKey="assets">
+          Things you own (Assets)
+        </Accordion.Toggle>
+        <Accordion.Collapse eventKey="assets">
+          <Card.Body>
+            <Form>
+              <PropertyInput
+                property={this.state.household.home}
+                onChange={this.onChange}
+              />
+              <hr />
+              <SavingsAccountInput
+                account={this.state.household.afterTaxAccount}
+                onChange={this.onChange}
+              />
+            </Form>
+          </Card.Body>
+        </Accordion.Collapse>
+      </Card>
+    );
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -208,11 +234,7 @@ class App extends Component<AppProps, AppState> {
                   eventKey="hh_expense"
                 />
                 {this.renderIncomeComponents()}
-                <SavingsAccountInput
-                  account={this.state.household.afterTaxAccount}
-                  onChange={this.onChange}
-                  eventKey="savings"
-                />
+                {this.renderAssets()}
               </Accordion>
             </Col>
             <Col className="col-md-8">
