@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import Accordion from "react-bootstrap/Accordion";
 import * as d3 from "d3-format";
 import { Household } from "./Household";
+import { FormGroup, Row } from "react-bootstrap";
 
 export class ExpenseCalculator {
   household: Household;
@@ -57,10 +58,16 @@ export class ExpenseCalculator {
 
     var inYearHouseholdEquivalent = Math.sqrt(inYearAdults + inYearChildren);
 
+    var modifiedStartingExpense =
+      startingExpense -
+      (year >= this.household.home.yearOfPurchase
+        ? this.household.startingRent
+        : 0);
+
     var inYearExpense = new MonetaryValue(
-      (startingExpense * inYearHouseholdEquivalent) /
+      (modifiedStartingExpense * inYearHouseholdEquivalent) /
         startingHouseholdEquivalent
-    );
+    ); /*
     if (
       this.household.home &&
       this.household.home.yearOfPurchase <= year &&
@@ -73,7 +80,7 @@ export class ExpenseCalculator {
             this.household.home.purchasePrice.value
         )
       );
-    }
+    }*/
 
     this.expenseSeries.set(year, inYearExpense);
     return inYearExpense;
@@ -101,9 +108,24 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
   }
 
   onChange(event) {
-    this.props.household.startingExpense = Number(
-      event.target.value.replace(/,/g, "")
-    );
+    var value = Number(event.target.value.replace(/,/g, ""));
+    switch (event.target.name) {
+      case "starting_expense": {
+        this.props.household.startingExpense = value;
+        break;
+      }
+      case "starting_rent": {
+        this.props.household.startingRent = value;
+        break;
+      }
+      default: {
+        console.warn(
+          "FullHHExpenseInput.OnChange called from unexpected element: " +
+            event.target.name
+        );
+      }
+    }
+
     this.props.onChange(event, this.props.household);
   }
 
@@ -116,20 +138,34 @@ export class FullHHExpenseInput extends Component<FullHHExpenseProps> {
         <Accordion.Collapse eventKey="expenses">
           <Card.Body>
             <Form>
-              <Form.Group>
-                <div className="row">
-                  <Form.Label className="col-md-8">
+              <FormGroup>
+                <Row>
+                  <Form.Label className="col-sm-8">
                     Annual expense today
                   </Form.Label>
                   <Form.Control
-                    className="col-md-4 text-right"
+                    name="starting_expense"
+                    className="col-sm-4 text-right"
                     type="text"
                     placeholder="30000"
                     value={d3.format(",")(this.props.household.startingExpense)}
                     onChange={this.onChange}
                   />
-                </div>
-              </Form.Group>
+                </Row>
+              </FormGroup>
+              <FormGroup>
+                <Row>
+                  <Form.Label className="col-sm-8"> Of which rent</Form.Label>
+                  <Form.Control
+                    className="col-sm-4 text-right"
+                    type="text"
+                    name="starting_rent"
+                    placeholder="12000"
+                    value={d3.format(",")(this.props.household.startingRent)}
+                    onChange={this.onChange}
+                  />
+                </Row>
+              </FormGroup>
             </Form>
           </Card.Body>
         </Accordion.Collapse>

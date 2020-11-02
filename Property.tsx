@@ -56,10 +56,10 @@ export class PropertyInput extends Component<
         </Row>
         <FormGroup>
           <Row>
-            <Col className="col-sm-8">
+            <Col className="col-sm-7">
               <Form.Label>Year of purchase</Form.Label>
             </Col>
-            <Col className="col-sm-4">
+            <Col className="col-sm-5">
               <Form.Control
                 className="text-right"
                 name="yearOfPurchase"
@@ -72,12 +72,12 @@ export class PropertyInput extends Component<
         </FormGroup>
         <Form.Group>
           <Row>
-            <Col className="col-sm-8">
+            <Col className="col-sm-7">
               <Form.Label>
                 Purchase price (in {new Date().getFullYear()} GBP)
               </Form.Label>
             </Col>
-            <Col className="col-sm-4">
+            <Col className="col-sm-5">
               <Form.Control
                 className="text-right"
                 type="text"

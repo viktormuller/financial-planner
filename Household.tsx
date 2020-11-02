@@ -10,6 +10,7 @@ export class Household {
   children: Children = new Children([]);
   adults: Adult[] = [new Adult()];
   startingExpense: number = 30000;
+  startingRent: number = 12000;
   startYear = new Date().getFullYear();
   endYear = new Date().getFullYear() + 80;
   home: Property = new Property(

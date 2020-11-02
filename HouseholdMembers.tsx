@@ -54,6 +54,13 @@ export class HouseholdMembers extends Component<
           Math.sqrt(oldMembers) /
           1000
       ) * 1000;
+
+    this.state.household.startingRent =
+      Math.round(
+        (this.state.household.startingRent * Math.sqrt(newMembers)) /
+          Math.sqrt(oldMembers) /
+          1000
+      ) * 1000;
   }
 
   onCurrentAdultsChanged(value) {

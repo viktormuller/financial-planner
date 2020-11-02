@@ -38,6 +38,11 @@ export class AssetCalculator {
   }
 
   netWorthSeries() {
-    return this.household.afterTaxAccount.allClosingValues();
+    var netWorthSeries = this.household.afterTaxAccount.allClosingValues();
+    for (let [year, value] of netWorthSeries.entries()) {
+      if (year >= this.household.home.yearOfPurchase)
+        netWorthSeries.set(year, value.add(this.household.home.purchasePrice));
+    }
+    return netWorthSeries;
   }
 }
