@@ -79,7 +79,7 @@ export class SavingsAccountInput extends Component<SavingsAccountProps> {
       <Form.Group>
         <Row>
           <Col sm={7}>
-            <Form.Label>Balance at the end of last year</Form.Label>
+            <Form.Label>Other savings and valuables</Form.Label>
           </Col>
           <Col sm={5}>
             <Form.Control

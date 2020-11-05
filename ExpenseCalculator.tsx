@@ -67,20 +67,7 @@ export class ExpenseCalculator {
     var inYearExpense = new MonetaryValue(
       (modifiedStartingExpense * inYearHouseholdEquivalent) /
         startingHouseholdEquivalent
-    ); /*
-    if (
-      this.household.home &&
-      this.household.home.yearOfPurchase <= year &&
-      this.household.home.yearOfPurchase > this.household.startYear
-    ) {
-      inYearExpense = inYearExpense.add(
-        new MonetaryValue(
-          -1 *
-            ExpenseCalculator.rentSaving *
-            this.household.home.purchasePrice.value
-        )
-      );
-    }*/
+    );
 
     this.expenseSeries.set(year, inYearExpense);
     return inYearExpense;
