@@ -15,11 +15,11 @@ export class PensionStrategy {
     earner: Adult,
     year: number,
     grossIncome: MonetaryValue
-  ): MonetaryValue {
-    var ret: MonetaryValue = new MonetaryValue(
-      grossIncome.value,
-      grossIncome.currency
-    );
+  ): { taxableIncome: MonetaryValue; pensionContribution: MonetaryValue } {
+    var ret = {
+      taxableIncome: new MonetaryValue(grossIncome.value, grossIncome.currency),
+      pensionContribution: new MonetaryValue(0)
+    };
 
     const contr: MonetaryValue = MonetaryValue.min(
       UKAnnualAllowance,
@@ -30,8 +30,12 @@ export class PensionStrategy {
       .add(earner.pensionAccount.income(year))
       .add(contr);
     earner.pensionAccount.setValue(year, thisYearsClosingBalance);
+    ret.taxableIncome = grossIncome.subtract(
+      grossIncome.multiply(UKEmployeeMinContr)
+    );
+    ret.pensionContribution = contr;
 
-    return ret.subtract(ret.multiply(UKEmployeeMinContr));
+    return ret;
   }
 
   /**
@@ -42,6 +46,10 @@ export class PensionStrategy {
     var unfundedBalance: MonetaryValue = new MonetaryValue(
       amount.value,
       amount.currency
+    );
+
+    console.log(
+      "Trying to withdraw " + amount.value + " from pension accounts."
     );
 
     while (unfundedBalance.value > 0) {
@@ -67,6 +75,9 @@ export class PensionStrategy {
       if (fundingFound.value <= 0) break;
       else unfundedBalance.subtract(fundingFound);
     }
+
+    if (unfundedBalance.value > 0)
+      console.debug("Unfunded balance: " + unfundedBalance.value);
 
     return unfundedBalance;
   }

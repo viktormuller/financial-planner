@@ -41,9 +41,9 @@ export class SavingsAccount extends Asset {
     if (ret) return ret;
     else {
       ret = new MonetaryValue(0);
+      this.closingValues.set(year, ret);
+      return ret;
     }
-    this.closingValues.set(year, ret);
-    return ret;
   }
 
   getOpeningBalance(): MonetaryValue {

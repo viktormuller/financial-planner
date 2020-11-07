@@ -14,7 +14,9 @@ export class IncomeCalculator {
   }
 
   income(year: number): MonetaryValue {
+    console.debug("Sources of income for year: " + year);
     var ret: MonetaryValue = new MonetaryValue(0);
+    var incomeSeriesEntry: MonetaryValue = new MonetaryValue(0);
 
     for (let adult of this.household.adults) {
       var incomeFromJob =
@@ -22,16 +24,41 @@ export class IncomeCalculator {
           ? adult.job.income(year)
           : new MonetaryValue(0);
 
-      ret = ret.add(
-        this.taxCalculator.tax(
-          this.pensionStrategy.contributeToPension(adult, year, incomeFromJob)
-        )
+      var pension = this.pensionStrategy.contributeToPension(
+        adult,
+        year,
+        incomeFromJob
       );
+
+      var netIncomeFromJob = this.taxCalculator.tax(pension.taxableIncome);
+
+      ret = ret.add(netIncomeFromJob);
+
+      console.debug("Net income from job: " + netIncomeFromJob.value);
+      console.debug(
+        "Pension contribution: " + pension.pensionContribution.value
+      );
+      console.debug(
+        "Pension return: " + adult.pensionAccount.income(year).value
+      );
+
+      incomeSeriesEntry = incomeSeriesEntry
+        .add(netIncomeFromJob)
+        .add(pension.pensionContribution)
+        .add(adult.pensionAccount.income(year));
     }
 
     ret = ret.add(this.household.afterTaxAccount.income(year));
+    incomeSeriesEntry = incomeSeriesEntry.add(
+      this.household.afterTaxAccount.income(year)
+    );
 
-    this.incomeSeries.set(year, ret);
+    console.debug(
+      "After tax savings return: " +
+        this.household.afterTaxAccount.income(year).value
+    );
+
+    this.incomeSeries.set(year, incomeSeriesEntry);
 
     return ret;
   }

@@ -32,7 +32,7 @@ export class Calculator {
 
       var expenseForYear = this.expenses.expense(year);
 
-      console.debug("Income for year:  " + incomeForYear.value);
+      console.debug("Income for year (excl. pension):  " + incomeForYear.value);
       console.debug("Expense for year: " + expenseForYear.value);
 
       this.assets.allocateEarnings(

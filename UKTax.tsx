@@ -16,12 +16,12 @@ const nIBrackets = [
 ];
 
 const inverseBrackets = [
-  { threshold: 9500, rate: 0 },
-  { threshold: 12140, rate: -0.1364 },
-  { threshold: 37640, rate: -0.4706 },
-  { threshold: 66640, rate: -0.7241 },
-  { threshold: 76140, rate: -1.6316 },
-  { threshold: 90640, rate: -0.7241 },
+  { threshold: 9500, rate: 1 },
+  { threshold: 12140, rate: 1.1364 },
+  { threshold: 37640, rate: 1.4706 },
+  { threshold: 66640, rate: 1.7241 },
+  { threshold: 76140, rate: 2.6316 },
+  { threshold: 90640, rate: 1.7241 },
   { threshold: Number.MAX_VALUE, rate: 1.8868 }
 ];
 
@@ -42,21 +42,25 @@ export class UKTax {
       if (curBracket.threshold >= preTaxIncome.value) break;
     }
 
+    console.debug(
+      "Result after applying brackets to " +
+        preTaxIncome.value +
+        " is " +
+        ret.value
+    );
+
     return ret;
   }
 
   tax(preTaxIncome: MonetaryValue): MonetaryValue {
     var ret: MonetaryValue = new MonetaryValue(preTaxIncome.value);
-    ret = ret.add(
-      new MonetaryValue(-1 * this.applyBracket(preTaxIncome, taxBrackets).value)
-    );
-    ret = ret.add(
-      new MonetaryValue(-1 * this.applyBracket(preTaxIncome, nIBrackets).value)
-    );
+    ret = ret.subtract(this.applyBracket(preTaxIncome, taxBrackets));
+    ret = ret.subtract(this.applyBracket(preTaxIncome, nIBrackets));
     return ret;
   }
 
   grossForNet(net: MonetaryValue): MonetaryValue {
+    console.debug("Converting net value of " + net.value + " to gross.");
     return this.applyBracket(net, inverseBrackets);
   }
 }

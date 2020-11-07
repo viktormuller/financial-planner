@@ -19,21 +19,11 @@ export class AssetCalculator {
       "Allocating earnings of " + afterTaxSaving.value + " for year: " + year
     );
 
-    console.debug(
-      "Household savings account: " + this.household.afterTaxAccount
-    );
     var account = this.household.afterTaxAccount;
     var prevYearBal = account.closingValue(year - 1);
 
     console.debug("Previous year balance: " + prevYearBal.value);
     prevYearBal = prevYearBal ? prevYearBal : new MonetaryValue(0);
-
-    // If home is purchased this year then account for it
-    if (this.household.home && this.household.home.yearOfPurchase == year) {
-      finalNetSaving = finalNetSaving.subtract(
-        this.household.home.purchasePrice
-      );
-    }
 
     if (finalNetSaving.value < 0) {
       var numOfPensioners = this.household.adults.filter(
@@ -48,6 +38,13 @@ export class AssetCalculator {
           )
         );
       }
+    }
+
+    // If home is purchased this year then account for it
+    if (this.household.home && this.household.home.yearOfPurchase == year) {
+      finalNetSaving = finalNetSaving.subtract(
+        this.household.home.purchasePrice
+      );
     }
     account.setValue(year, prevYearBal.add(finalNetSaving));
     console.debug(
