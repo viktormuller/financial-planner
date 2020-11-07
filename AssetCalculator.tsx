@@ -1,8 +1,10 @@
 import { Household } from "./Household";
 import { MonetaryValue } from "./MonetaryValue";
+import { PensionStrategy } from "./PensionStrategy";
 
 export class AssetCalculator {
   household: Household;
+  pensionStrategy: PensionStrategy = new PensionStrategy();
 
   constructor(household: Household) {
     this.household = household;
@@ -26,10 +28,17 @@ export class AssetCalculator {
 
     // If home is purchased this year then account for it
     if (this.household.home && this.household.home.yearOfPurchase == year) {
-      finalNetSaving = finalNetSaving.add(
-        new MonetaryValue(-1 * this.household.home.purchasePrice.value)
+      finalNetSaving = finalNetSaving.subtract(
+        this.household.home.purchasePrice
       );
     }
+
+    if (finalNetSaving.value < 0)
+      finalNetSaving = this.pensionStrategy.withdraw(
+        this.household,
+        finalNetSaving.multiply(-1),
+        year
+      );
 
     account.setValue(year, prevYearBal.add(finalNetSaving));
     console.debug(
@@ -39,9 +48,23 @@ export class AssetCalculator {
 
   netWorthSeries() {
     var netWorthSeries = this.household.afterTaxAccount.allClosingValues();
-    for (let [year, value] of netWorthSeries.entries()) {
+    for (let [year, balance] of netWorthSeries.entries()) {
+      var newBalance: MonetaryValue = new MonetaryValue(
+        balance.value,
+        balance.currency
+      );
       if (year >= this.household.home.yearOfPurchase)
-        netWorthSeries.set(year, value.add(this.household.home.purchasePrice));
+        newBalance = newBalance.add(this.household.home.purchasePrice);
+
+      for (let earner of this.household.adults) {
+        console.debug(
+          "Adding pension account to net worth: " +
+            earner.pensionAccount.closingValue(year).value
+        );
+        newBalance = newBalance.add(earner.pensionAccount.closingValue(year));
+        console.debug("Update net worth: " + newBalance.value);
+      }
+      netWorthSeries.set(year, newBalance);
     }
     return netWorthSeries;
   }
