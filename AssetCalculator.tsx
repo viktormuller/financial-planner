@@ -1,10 +1,12 @@
 import { Household } from "./Household";
 import { MonetaryValue } from "./MonetaryValue";
 import { PensionStrategy } from "./PensionStrategy";
+import { UKTax } from "./UKTax";
 
 export class AssetCalculator {
   household: Household;
   pensionStrategy: PensionStrategy = new PensionStrategy();
+  taxCalc: UKTax = new UKTax();
 
   constructor(household: Household) {
     this.household = household;
@@ -33,13 +35,20 @@ export class AssetCalculator {
       );
     }
 
-    if (finalNetSaving.value < 0)
-      finalNetSaving = this.pensionStrategy.withdraw(
-        this.household,
-        finalNetSaving.multiply(-1),
-        year
-      );
-
+    if (finalNetSaving.value < 0) {
+      var numOfPensioners = this.household.adults.filter(
+        adult => adult.job.endYear < year
+      ).length;
+      if (numOfPensioners > 0) {
+        finalNetSaving = this.taxCalc.tax(
+          this.pensionStrategy.withdraw(
+            this.household,
+            this.taxCalc.grossForNet(finalNetSaving).multiply(-1),
+            year
+          )
+        );
+      }
+    }
     account.setValue(year, prevYearBal.add(finalNetSaving));
     console.debug(
       "This year's balance: " + prevYearBal.add(finalNetSaving).value

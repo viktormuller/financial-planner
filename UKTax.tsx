@@ -15,6 +15,16 @@ const nIBrackets = [
   { threshold: Number.MAX_VALUE, rate: 0.02 }
 ];
 
+const inverseBrackets = [
+  { threshold: 9500, rate: 0 },
+  { threshold: 12140, rate: -0.1364 },
+  { threshold: 37640, rate: -0.4706 },
+  { threshold: 66640, rate: -0.7241 },
+  { threshold: 76140, rate: -1.6316 },
+  { threshold: 90640, rate: -0.7241 },
+  { threshold: Number.MAX_VALUE, rate: 1.8868 }
+];
+
 export class UKTax {
   private applyBracket(preTaxIncome: MonetaryValue, brackets): MonetaryValue {
     var ret: MonetaryValue = new MonetaryValue(0);
@@ -44,5 +54,9 @@ export class UKTax {
       new MonetaryValue(-1 * this.applyBracket(preTaxIncome, nIBrackets).value)
     );
     return ret;
+  }
+
+  grossForNet(net: MonetaryValue): MonetaryValue {
+    return this.applyBracket(net, inverseBrackets);
   }
 }

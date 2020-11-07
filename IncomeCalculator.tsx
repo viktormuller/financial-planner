@@ -24,7 +24,7 @@ export class IncomeCalculator {
 
       ret = ret.add(
         this.taxCalculator.tax(
-          this.pensionStrategy.apply(adult, year, incomeFromJob)
+          this.pensionStrategy.contributeToPension(adult, year, incomeFromJob)
         )
       );
     }
