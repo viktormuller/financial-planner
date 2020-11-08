@@ -28,12 +28,9 @@ export class AssetCalculator {
 
     console.debug("Previous year balance: " + prevYearBal.value);
     prevYearBal = prevYearBal ? prevYearBal : new MonetaryValue(0);
-    /*
+
     if (finalNetSaving.value < 0) {
-      var numOfPensioners = this.household.adults.filter(
-        adult => adult.job.endYear < year
-      ).length;
-      if (numOfPensioners > 0) {
+      if (this.household.pensioners(year).length > 0) {
         finalNetSaving = finalNetSaving.add(
           this.taxCalc.tax(
             this.pensionStrategy.withdraw(
@@ -45,7 +42,7 @@ export class AssetCalculator {
         );
       }
     }
-*/
+
     // If home is purchased this year then account for it
     if (this.household.home && this.household.home.yearOfPurchase == year) {
       finalNetSaving = finalNetSaving.subtract(

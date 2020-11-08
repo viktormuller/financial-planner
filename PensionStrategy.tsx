@@ -49,10 +49,8 @@ export class PensionStrategy {
 
     var fundingFound = new MonetaryValue(0, amount.currency);
 
-    var pensioners = hh.adults.filter(
-      adult => adult.yearOfJoining >= year && adult.job.endYear < year
-    );
-
+    var pensioners: Adult[] = hh.pensioners(year);
+    /*
     while (fundingFound.value < amount.value) {
       var adultWithMinBalance: Adult = pensioners.reduce(
         (min: Adult, cur: Adult) =>
@@ -62,16 +60,25 @@ export class PensionStrategy {
             ? cur
             : min
       );
+
       if (adultWithMinBalance) {
-        var minBalance = adultWithMinBalance.pensionAccount.closingValue(year);
+        console.debug(
+          "Adult with min Balnace found: " +
+            adultWithMinBalance.pensionAccount.closingValue(year).value
+        );
+        /* var minBalance = adultWithMinBalance.pensionAccount.closingValue(year);
         for (let pensioner of pensioners) {
           if (pensioner.pensionAccount.closingValue(year).value > 0) {
             pensioner.pensionAccount.addValue(year, minBalance.multiply(-1));
             fundingFound = fundingFound.add(minBalance);
           }
         }
-      } else break;
-    }
+      } else {
+        console.debug("No more pension left, terminating loop.");
+
+        break;
+      }
+    }*/
 
     if (fundingFound.value < amount.value)
       console.debug("Unfunded balance: " + (amount.value - fundingFound.value));
