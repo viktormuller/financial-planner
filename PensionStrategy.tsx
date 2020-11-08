@@ -43,18 +43,13 @@ export class PensionStrategy {
    */
   //TODO tax withdrawals, add to income graph
   withdraw(hh: Household, amount: MonetaryValue, year: number): MonetaryValue {
-    var unfundedBalance: MonetaryValue = new MonetaryValue(
-      amount.value,
-      amount.currency
-    );
-
     console.log(
       "Trying to withdraw " + amount.value + " from pension accounts."
     );
 
-    while (unfundedBalance.value > 0) {
-      var fundingFound = new MonetaryValue(0, unfundedBalance.currency);
+    var fundingFound = new MonetaryValue(0, amount.currency);
 
+    while (fundingFound.value < amount.value) {
       var adultWithMinBalance: Adult = hh.adults.reduce(
         (min: Adult, cur: Adult) =>
           min.pensionAccount.closingValue(year) >
@@ -71,14 +66,14 @@ export class PensionStrategy {
             fundingFound = fundingFound.add(minBalance);
           }
         }
-      }
-      if (fundingFound.value <= 0) break;
-      else unfundedBalance.subtract(fundingFound);
+      } else break;
     }
 
-    if (unfundedBalance.value > 0)
-      console.debug("Unfunded balance: " + unfundedBalance.value);
+    if (fundingFound.value < amount.value)
+      console.debug("Unfunded balance: " + (amount.value - fundingFound.value));
 
-    return unfundedBalance;
+    console.debug("Withdrawn " + fundingFound.value);
+
+    return fundingFound;
   }
 }

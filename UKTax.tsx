@@ -60,7 +60,7 @@ export class UKTax {
   }
 
   grossForNet(net: MonetaryValue): MonetaryValue {
-  /  console.debug("Converting net value of " + net.value + " to gross.");
+    //  console.debug("Converting net value of " + net.value + " to gross.");
     return this.applyBracket(net, inverseBrackets);
   }
 }

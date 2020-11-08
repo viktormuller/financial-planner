@@ -24,19 +24,20 @@ export class IncomeCalculator {
           ? adult.job.income(year)
           : new MonetaryValue(0);
 
-      var pension = {
+      /*var pension = {
         taxableIncome: incomeFromJob,
         pensionContribution: new MonetaryValue(0)
-      }; /*this.pensionStrategy.contributeToPension(
+      }; */
+      var pension = this.pensionStrategy.contributeToPension(
         adult,
         year,
         incomeFromJob
-      );*/
+      );
 
       var netIncomeFromJob = this.taxCalculator.tax(pension.taxableIncome);
 
       ret = ret.add(netIncomeFromJob);
-      /*console.debug("Gross income from job: " + incomeFromJob.value);
+      console.debug("Gross income from job: " + incomeFromJob.value);
       console.debug("Taxable income from job: " + pension.taxableIncome.value);
       console.debug("Net income from job: " + netIncomeFromJob.value);
       console.debug(
@@ -44,7 +45,7 @@ export class IncomeCalculator {
       );
       console.debug(
         "Pension return: " + adult.pensionAccount.income(year).value
-      );*/
+      );
       incomeSeriesEntry = incomeSeriesEntry
         .add(netIncomeFromJob)
         .add(pension.pensionContribution)
@@ -55,11 +56,11 @@ export class IncomeCalculator {
     incomeSeriesEntry = incomeSeriesEntry.add(
       this.household.afterTaxAccount.income(year)
     );
-    /*
+
     console.debug(
       "After tax savings return: " +
         this.household.afterTaxAccount.income(year).value
-    );*/
+    );
 
     this.incomeSeries.set(year, incomeSeriesEntry);
 
