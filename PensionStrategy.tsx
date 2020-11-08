@@ -50,27 +50,51 @@ export class PensionStrategy {
     var fundingFound = new MonetaryValue(0, amount.currency);
 
     var pensioners: Adult[] = hh.pensioners(year);
-    /*
-    while (fundingFound.value < amount.value) {
-      var adultWithMinBalance: Adult = pensioners.reduce(
-        (min: Adult, cur: Adult) =>
-          min.pensionAccount.closingValue(year) >
-            cur.pensionAccount.closingValue(year) &&
-          cur.pensionAccount.closingValue(year).value > 0
-            ? cur
-            : min
-      );
 
-      if (adultWithMinBalance) {
-        console.debug(
-          "Adult with min Balnace found: " +
-            adultWithMinBalance.pensionAccount.closingValue(year).value
+    while (fundingFound.value < amount.value) {
+      var amountToWithdraw = amount.subtract(fundingFound);
+      var pensionersWithBalance = pensioners.filter(
+        pensioner => pensioner.pensionAccount.closingValue(year).value > 0
+      );
+      if (pensionersWithBalance.length > 0) {
+        var adultWithMinBalance: Adult = pensionersWithBalance.reduce(
+          (min: Adult, cur: Adult) =>
+            min.pensionAccount.closingValue(year).value >
+              cur.pensionAccount.closingValue(year).value &&
+            cur.pensionAccount.closingValue(year).value > 0
+              ? cur
+              : min
         );
-        /* var minBalance = adultWithMinBalance.pensionAccount.closingValue(year);
+        pensionersWithBalance.map((pensioner, index) =>
+          console.debug(
+            "Pensioner " +
+              index +
+              " balance: " +
+              pensioner.pensionAccount.closingValue(year).value +
+              " "
+          )
+        );
+
+        var minBalance = adultWithMinBalance.pensionAccount.closingValue(year);
+
+        console.debug("Min balance: " + minBalance.value);
+        var amtToWithdrawPerPensioner = MonetaryValue.min(
+          minBalance,
+          amountToWithdraw.multiply(1 / pensionersWithBalance.length)
+        );
+
+        console.debug(
+          "Amount to withdraw per pensioner: " + amtToWithdrawPerPensioner.value
+        );
+
         for (let pensioner of pensioners) {
           if (pensioner.pensionAccount.closingValue(year).value > 0) {
-            pensioner.pensionAccount.addValue(year, minBalance.multiply(-1));
-            fundingFound = fundingFound.add(minBalance);
+            pensioner.pensionAccount.addValue(
+              year,
+              amtToWithdrawPerPensioner.multiply(-1)
+            );
+            fundingFound = fundingFound.add(amtToWithdrawPerPensioner);
+            console.debug("Funding found: " + fundingFound.value);
           }
         }
       } else {
@@ -78,7 +102,7 @@ export class PensionStrategy {
 
         break;
       }
-    }*/
+    }
 
     if (fundingFound.value < amount.value)
       console.debug("Unfunded balance: " + (amount.value - fundingFound.value));
