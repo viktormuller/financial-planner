@@ -1,4 +1,5 @@
 import { Household } from "./Household";
+import { Income } from "./IncomeCalculator";
 import { MonetaryValue } from "./MonetaryValue";
 import { PensionStrategy } from "./PensionStrategy";
 import { UKTax } from "./UKTax";
@@ -12,12 +13,12 @@ export class AssetCalculator {
     this.household = household;
   }
 
-  allocateEarnings(year: number, afterTaxSaving: MonetaryValue) {
-    var finalNetSaving: MonetaryValue = afterTaxSaving;
+  allocateEarnings(year: number, netSavings: MonetaryValue) {
+    var finalNetSaving: MonetaryValue = netSavings;
 
     console.debug(
       "Allocating after tax savings of " +
-        afterTaxSaving.value +
+        netSavings.value +
         " for year: " +
         year
     );
@@ -27,7 +28,7 @@ export class AssetCalculator {
 
     console.debug("Previous year balance: " + prevYearBal.value);
     prevYearBal = prevYearBal ? prevYearBal : new MonetaryValue(0);
-
+    /*
     if (finalNetSaving.value < 0) {
       var numOfPensioners = this.household.adults.filter(
         adult => adult.job.endYear < year
@@ -44,7 +45,7 @@ export class AssetCalculator {
         );
       }
     }
-
+*/
     // If home is purchased this year then account for it
     if (this.household.home && this.household.home.yearOfPurchase == year) {
       finalNetSaving = finalNetSaving.subtract(

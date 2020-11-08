@@ -32,15 +32,14 @@ export class Calculator {
 
       var expenseForYear = this.expenses.expense(year);
 
+      incomeForYear = incomeForYear.add(
+        expenseForYear.multiply(-1)
+      );
+
       //  console.debug("Income for year (excl. pension):  " + incomeForYear.value);
       // console.debug("Expense for year: " + expenseForYear.value);
 
-      this.assets.allocateEarnings(
-        year,
-        incomeForYear.add(
-          new MonetaryValue(expenseForYear.value * -1, expenseForYear.currency)
-        )
-      );
+      this.assets.allocateEarnings(year, incomeForYear);
     }
     return this.assets.netWorthSeries();
   }

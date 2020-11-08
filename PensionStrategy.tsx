@@ -49,8 +49,12 @@ export class PensionStrategy {
 
     var fundingFound = new MonetaryValue(0, amount.currency);
 
+    var pensioners = hh.adults.filter(
+      adult => adult.yearOfJoining >= year && adult.job.endYear < year
+    );
+
     while (fundingFound.value < amount.value) {
-      var adultWithMinBalance: Adult = hh.adults.reduce(
+      var adultWithMinBalance: Adult = pensioners.reduce(
         (min: Adult, cur: Adult) =>
           min.pensionAccount.closingValue(year) >
             cur.pensionAccount.closingValue(year) &&
@@ -60,9 +64,9 @@ export class PensionStrategy {
       );
       if (adultWithMinBalance) {
         var minBalance = adultWithMinBalance.pensionAccount.closingValue(year);
-        for (let adult of hh.adults) {
-          if (adult.pensionAccount.closingValue(year).value > 0) {
-            adult.pensionAccount.addValue(year, minBalance);
+        for (let pensioner of pensioners) {
+          if (pensioner.pensionAccount.closingValue(year).value > 0) {
+            pensioner.pensionAccount.addValue(year, minBalance.multiply(-1));
             fundingFound = fundingFound.add(minBalance);
           }
         }
