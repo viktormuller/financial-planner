@@ -16,7 +16,10 @@ export class AssetCalculator {
     var finalNetSaving: MonetaryValue = afterTaxSaving;
 
     console.debug(
-      "Allocating earnings of " + afterTaxSaving.value + " for year: " + year
+      "Allocating after tax savings of " +
+        afterTaxSaving.value +
+        " for year: " +
+        year
     );
 
     var account = this.household.afterTaxAccount;

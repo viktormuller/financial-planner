@@ -33,7 +33,8 @@ export class IncomeCalculator {
       var netIncomeFromJob = this.taxCalculator.tax(pension.taxableIncome);
 
       ret = ret.add(netIncomeFromJob);
-
+      console.debug("Gross income from job: " + incomeFromJob.value);
+      console.debug("Taxable income from job: " + pension.taxableIncome.value);
       console.debug("Net income from job: " + netIncomeFromJob.value);
       console.debug(
         "Pension contribution: " + pension.pensionContribution.value
