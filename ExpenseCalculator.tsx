@@ -40,14 +40,14 @@ export class ExpenseCalculator {
     //Assuming cost for Children for year 0 to 18, i.e. in 19 years
     var inYearChildren = this.household.children.yearsOfBirth.filter(
       (yearOfBirth: number) => {
-        console.debug(
+        /*   console.debug(
           "yearOfBirth +19: " +
             (yearOfBirth + ExpenseCalculator.childSupportMaxAge)
         );
         console.debug(
           "year < yearOfBirth + 19: " +
             (year < yearOfBirth + ExpenseCalculator.childSupportMaxAge)
-        );
+        );*/
         return (
           yearOfBirth <= year &&
           year < yearOfBirth + ExpenseCalculator.childSupportMaxAge

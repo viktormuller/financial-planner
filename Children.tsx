@@ -96,28 +96,6 @@ export class Children {
   constructor(yearsOfBirth: number[]) {
     this.yearsOfBirth = yearsOfBirth;
   }
-  /*
-  //Handle out of order yearsOfBirth by sorting yearsOfBirth array
-  expense(year: number): MonetaryValue {
-    console.debug("Caculating expense for Children for year " + year);
-    var sortedYoB = this.yearsOfBirth.sort(function(a, b) {
-      return a - b;
-    });
-    var ret: MonetaryValue = new MonetaryValue(0);
-    for (let i = 0; i < this.yearsOfBirth.length; i++) {
-      console.debug("Child number " + i);
-      var age: number = year - sortedYoB[i];
-      console.debug("Child number " + i + " age: " + age);
-      if (0 < age && age < 18) {
-        var childIndex = Math.min(i, Children.costOfChild.length - 1);
-        console.debug("Child number " + i + " index: " + childIndex);
-        var childCost = Children.costOfChild[childIndex][age];
-        console.debug("Child number " + i + " costs: " + childCost);
-        ret = ret.add(new MonetaryValue(childCost));
-      }
-    }
-    return ret;
-  }*/
 }
 
 class ChildrenProps {
