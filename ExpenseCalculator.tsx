@@ -11,7 +11,7 @@ import { FormGroup, Row } from "react-bootstrap";
 export class ExpenseCalculator {
   household: Household;
   expenseSeries: Map<number, MonetaryValue> = new Map<number, MonetaryValue>();
-  static rentSaving: number = 0.03; // 3% of homes purchase price assumed to be rent
+  //  static rentSaving: number = 0.03; // 3% of homes purchase price assumed to be rent
   static childSupportMaxAge: number = 23;
   constructor(household: Household) {
     this.household = household;
@@ -40,14 +40,14 @@ export class ExpenseCalculator {
     //Assuming cost for Children for year 0 to 18, i.e. in 19 years
     var inYearChildren = this.household.children.yearsOfBirth.filter(
       (yearOfBirth: number) => {
-        console.debug(
+        /*   console.debug(
           "yearOfBirth +19: " +
             (yearOfBirth + ExpenseCalculator.childSupportMaxAge)
         );
         console.debug(
           "year < yearOfBirth + 19: " +
             (year < yearOfBirth + ExpenseCalculator.childSupportMaxAge)
-        );
+        );*/
         return (
           yearOfBirth <= year &&
           year < yearOfBirth + ExpenseCalculator.childSupportMaxAge
@@ -67,20 +67,7 @@ export class ExpenseCalculator {
     var inYearExpense = new MonetaryValue(
       (modifiedStartingExpense * inYearHouseholdEquivalent) /
         startingHouseholdEquivalent
-    ); /*
-    if (
-      this.household.home &&
-      this.household.home.yearOfPurchase <= year &&
-      this.household.home.yearOfPurchase > this.household.startYear
-    ) {
-      inYearExpense = inYearExpense.add(
-        new MonetaryValue(
-          -1 *
-            ExpenseCalculator.rentSaving *
-            this.household.home.purchasePrice.value
-        )
-      );
-    }*/
+    );
 
     this.expenseSeries.set(year, inYearExpense);
     return inYearExpense;

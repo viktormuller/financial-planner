@@ -17,4 +17,12 @@ export class Household {
     new Date().getFullYear() + 10,
     new MonetaryValue(300000)
   );
+
+  pensioners(year: number): Adult[] {
+    var pens = this.adults.filter((adult, index) => {
+      return adult.yearOfJoining <= year && adult.job.endYear < year;
+    });
+
+    return pens;
+  }
 }

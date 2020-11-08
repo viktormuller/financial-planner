@@ -64,10 +64,10 @@ export class HouseholdMembers extends Component<
   }
 
   onCurrentAdultsChanged(value) {
-    console.debug(
+    /* console.debug(
       "Updating number of Adults from: " + this.state.household.adults.length
     );
-    console.debug("New target number of current adults: " + value);
+    console.debug("New target number of current adults: " + value);*/
     var adultsToAdd = Math.max(0, value - this.state.currentAdults.length);
     var adultsToRemove = Math.max(0, this.state.currentAdults.length - value);
 

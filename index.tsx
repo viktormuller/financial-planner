@@ -85,11 +85,6 @@ class App extends Component<AppProps, AppState> {
   }
 
   renderIncomeComponents(): JSX.Element {
-    console.debug("Invoking renderIncomeComponents");
-    console.debug(
-      "# of adults in household: " + this.state.household.adults.length
-    );
-
     var ret = (
       <Card>
         <Accordion.Toggle as={Card.Header} eventKey="income">

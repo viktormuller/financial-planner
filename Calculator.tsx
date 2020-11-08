@@ -19,28 +19,27 @@ export class Calculator {
 
   update() {
     //Iterate over each year
-    console.debug("Updating household");
+    // console.debug("Updating household");
     for (
       var year = this.household.startYear;
       year < this.household.endYear + 1;
       year++
     ) {
-      console.debug("Year: " + year);
+      //    console.debug("Year: " + year);
 
       //TODO: use Household default currency instead of hardcoded GBP
       var incomeForYear = this.incomes.income(year);
 
       var expenseForYear = this.expenses.expense(year);
 
-      console.debug("Income for year:  " + incomeForYear.value);
-      console.debug("Expense for year: " + expenseForYear.value);
-
-      this.assets.allocateEarnings(
-        year,
-        incomeForYear.add(
-          new MonetaryValue(expenseForYear.value * -1, expenseForYear.currency)
-        )
+      incomeForYear = incomeForYear.add(
+        expenseForYear.multiply(-1)
       );
+
+      //  console.debug("Income for year (excl. pension):  " + incomeForYear.value);
+      // console.debug("Expense for year: " + expenseForYear.value);
+
+      this.assets.allocateEarnings(year, incomeForYear);
     }
     return this.assets.netWorthSeries();
   }
