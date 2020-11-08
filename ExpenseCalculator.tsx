@@ -11,7 +11,7 @@ import { FormGroup, Row } from "react-bootstrap";
 export class ExpenseCalculator {
   household: Household;
   expenseSeries: Map<number, MonetaryValue> = new Map<number, MonetaryValue>();
-  static rentSaving: number = 0.03; // 3% of homes purchase price assumed to be rent
+  //  static rentSaving: number = 0.03; // 3% of homes purchase price assumed to be rent
   static childSupportMaxAge: number = 23;
   constructor(household: Household) {
     this.household = household;
