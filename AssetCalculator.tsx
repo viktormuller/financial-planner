@@ -32,12 +32,11 @@ export class AssetCalculator {
     if (finalNetSaving.value < 0) {
       if (this.household.pensioners(year).length > 0) {
         finalNetSaving = finalNetSaving.add(
-          this.taxCalc.tax(
-            this.pensionStrategy.withdraw(
-              this.household,
-              this.taxCalc.grossForNet(finalNetSaving.multiply(-1)),
-              year
-            )
+          this.pensionStrategy.withdrawNet(
+            this.household,
+            finalNetSaving.multiply(-1),
+            year,
+            this.taxCalc
           )
         );
       }
