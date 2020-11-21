@@ -251,7 +251,9 @@ alasql(
   "CREATE TABLE IF NOT EXISTS account_definitions (id INT PRIMARY KEY AUTO_INCREMENT,statement VARCHAR(63), name VARCHAR(63), parent_id INT FOREIGN KEY REFERENCES account_definitions(id)) "
 );
 alasql
-  .promise('SELECT * FROM CSV("./AccountDefinitions.csv", {separator:","})')
+  .promise(
+    'SELECT * FROM CSV("https://raw.githubusercontent.com/viktormuller/financial-planner/accounting_db/AccountDefinitions.csv", {separator:","})'
+  )
   .then(data => {
     //var res = alasql("SELECT * FROM account_definitions");
     console.log(data);
