@@ -252,11 +252,11 @@ alasql(
 );
 alasql
   .promise(
-    'SELECT * FROM CSV("https://raw.githubusercontent.com/viktormuller/financial-planner/accounting_db/AccountDefinitions.csv", {separator:","})'
+    'SELECT * INTO account_definitions FROM CSV("https://raw.githubusercontent.com/viktormuller/financial-planner/accounting_db/AccountDefinitions.csv", {separator:","})'
   )
   .then(data => {
-    //var res = alasql("SELECT * FROM account_definitions");
-    console.log(data);
+    var res = alasql("SELECT * FROM account_definitions");
+    console.log(res);
   });
 
 render(<App household={new Household()} />, document.getElementById("root"));
