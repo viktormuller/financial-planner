@@ -17,7 +17,7 @@ id,statement,name,parent_id
 16,CASH_FLOW,Net income from pension withdrawal,14
 17,CASH_FLOW,Taxable capital gain,
 18,CASH_FLOW,Taxable capital gain from residential property,18
-19,CASH_FLOW,Other taxable capital gain�,18
+19,CASH_FLOW,Other taxable capital gain,18
 20,CASH_FLOW,Capital gain tax,
 21,CASH_FLOW,Net capital gain,
 22,CASH_FLOW,Tax free capital gain on IRA,
