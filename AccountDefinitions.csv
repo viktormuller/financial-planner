@@ -1,0 +1,18 @@
+statement,name,parent_id
+"CASH_FLOW","Total income",
+CASH_FLOW,Employer pension contribution,
+CASH_FLOW,Gross income,
+CASH_FLOW,Employee pension salary sacrifice,
+CASH_FLOW,Taxable income before pension withdrawal,
+CASH_FLOW,Taxable pension withdrawal,
+CASH_FLOW,Taxable income,
+CASH_FLOW,Income tax,
+CASH_FLOW,Income tax on Taxable income before pension withdrawal,8
+CASH_FLOW,Income tax on pension withdrawal,8
+CASH_FLOW,Employee's national insurance contribution,
+CASH_FLOW,Employee's NIC before pension withdrawal,11
+CASH_FLOW,Employee's NIC on pension withdrawal,11
+CASH_FLOW,Net income,
+CASH_FLOW,Net income before pension withdrawal,14
+CASH_FLOW,Net income from pension withdrawal,14
+CASH_FLOW,Taxable capital gain,

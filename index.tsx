@@ -25,6 +25,7 @@ import { Adult } from "./Adult";
 import { MonetaryValue } from "./MonetaryValue";
 import { Col, Container, Navbar, Row } from "react-bootstrap";
 import { PropertyInput } from "./Property";
+import alasql from "alasql";
 
 interface AppProps {
   household: Household;
@@ -51,6 +52,7 @@ class App extends Component<AppProps, AppState> {
 
   constructor(props) {
     super(props);
+
     var household = props.household;
     var headOfHH = new Adult();
 
@@ -244,5 +246,15 @@ class App extends Component<AppProps, AppState> {
     );
   }
 }
+
+alasql(
+  "CREATE TABLE IF NOT EXISTS account_definitions (id INT PRIMARY KEY AUTO_INCREMENT,statement VARCHAR(63), name VARCHAR(63), parent_id INT FOREIGN KEY REFERENCES account_definitions(id)) "
+);
+alasql
+  .promise('SELECT * FROM CSV("./AccountDefinitions.csv", {separator:","})')
+  .then(data => {
+    //var res = alasql("SELECT * FROM account_definitions");
+    console.log(data);
+  });
 
 render(<App household={new Household()} />, document.getElementById("root"));

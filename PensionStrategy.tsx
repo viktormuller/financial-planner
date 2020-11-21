@@ -47,7 +47,7 @@ export class PensionStrategy {
     year: number,
     taxCalc: UKTax
   ) {
-    console.log(
+    console.debug(
       "Trying to withdraw net " + netAmount.value + " from pension accounts."
     );
 
